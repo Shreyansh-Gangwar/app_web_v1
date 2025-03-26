@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "683453713493",
+    "project_id": "ultimaapps1",
+    "storage_bucket": "ultimaapps1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:683453713493:android:1f4d73e712df164ea818dc",
+        "android_client_info": {
+          "package_name": "com.example.app_web_v1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJ0WRn5y8W-vDRKWmAcX7oTYzcVislVCc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
