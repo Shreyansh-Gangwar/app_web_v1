@@ -17,12 +17,14 @@ class HomePage extends StatelessWidget {
               children: [
                 Column(
                   children: [
-                    Text(
-                      "Hey Shreyansh", //USER NAME
-                      style: Theme.of(context).textTheme.titleLarge,
+                    SizedBox(
+                      child: Text(
+                        "Hey Shreyansh", //USER NAME
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(left: 55.0),
+                      padding: const EdgeInsets.only(left: 50.0),
                       child: Text(
                         'Start your day with a healthy meal !',
                         style: Theme.of(context).textTheme.labelSmall,
