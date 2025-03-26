@@ -114,7 +114,7 @@ class HomePage extends StatelessWidget {
                   ),
                   Column(
                     children: [
-                      SizedBox(height: 90),
+                      SizedBox(height: 80),
                       Center(
                         child: Text(
                           'Today', //DATE
@@ -125,7 +125,7 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
                       ),
-                      SizedBox(height: 12),
+                      SizedBox(height: 20),
                       Text(
                         '1000/2500', //CALORIES
                         style: Theme.of(context).textTheme.titleLarge!.copyWith(
@@ -134,6 +134,131 @@ class HomePage extends StatelessWidget {
                         ),
                       ),
                       Text('Calories'),
+                      SizedBox(height: 100),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Column(
+                            children: [
+                              Text(
+                                '50',
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                              Text(
+                                'Protein',
+                                style: Theme.of(context).textTheme.labelSmall,
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                '50',
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                              Text(
+                                'Carbs',
+                                style: Theme.of(context).textTheme.labelSmall,
+                              ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              Text(
+                                '50',
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                              Text(
+                                'Fats',
+                                style: Theme.of(context).textTheme.labelSmall,
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 20),
+                      Row(
+                        children: [
+                          SizedBox(width: 50),
+                          Text(
+                            "Estrogenic Content:",
+                            style: Theme.of(context).textTheme.labelSmall,
+                          ),
+                          SizedBox(width: 50),
+                          Text(
+                            'Low', //ESTROGENIC CONTENT
+                            style: Theme.of(context).textTheme.labelSmall!
+                                .copyWith(color: AppColor.brand500),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 40),
+            Padding(
+              padding: const EdgeInsets.only(left: 50.0),
+              child: Row(
+                children: [
+                  Text(
+                    'Last Scanned',
+                    textAlign: TextAlign.left,
+                    style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 10),
+            AppContainer(
+              height: 95,
+              width: 355,
+              child: Column(
+                children: [
+                  SizedBox(height: 18),
+                  Row(
+                    children: [
+                      SizedBox(width: 30),
+                      Text(
+                        "Apple Pie", //FOOD NAME
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 12.0),
+                          child: Text(
+                            textAlign: TextAlign.end,
+                            '200cal', //CALORIES
+                            style: Theme.of(context).textTheme.labelSmall!
+                                .copyWith(color: AppColor.brand500),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  Divider(color: Colors.grey[250], thickness: 1),
+                  Row(
+                    children: [
+                      SizedBox(width: 30),
+                      Text(
+                        "Daal Chawal", //FOOD NAME
+                        style: Theme.of(context).textTheme.labelSmall,
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 12.0),
+                          child: Text(
+                            textAlign: TextAlign.end,
+                            '400cal', //CALORIES
+                            style: Theme.of(context).textTheme.labelSmall!
+                                .copyWith(color: AppColor.brand500),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ],
