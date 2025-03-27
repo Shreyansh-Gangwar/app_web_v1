@@ -13,7 +13,7 @@ class HomePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const SizedBox(height: 100),
+            const SizedBox(height: 80),
             Row(
               children: [
                 Column(
@@ -44,7 +44,7 @@ class HomePage extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 35),
+            const SizedBox(height: 25),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -89,7 +89,7 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 38),
+            SizedBox(height: 28),
             AppContainer(
               height: 420,
               width: 340,
@@ -200,7 +200,7 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 40),
+            SizedBox(height: 25),
             Padding(
               padding: const EdgeInsets.only(left: 50.0),
               child: Row(
@@ -216,58 +216,66 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(height: 10),
-            AppContainer(
-              height: 95,
-              width: 355,
-              child: Column(
-                children: [
-                  SizedBox(height: 18),
-                  Row(
-                    children: [
-                      SizedBox(width: 30),
-                      Text(
-                        "Apple Pie", //FOOD NAME
-                        style: Theme.of(context).textTheme.labelSmall,
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 12.0),
-                          child: Text(
-                            textAlign: TextAlign.end,
-                            '200cal', //CALORIES
-                            style: Theme.of(context).textTheme.labelSmall!
-                                .copyWith(color: AppColor.brand500),
-                          ),
+            SizedBox(height: 20),
+            Stack(
+              children: [
+                Center(
+                  child: Column(children: [SizedBox(height: 100), NavBar()]),
+                ),
+                Center(
+                  child: AppContainer(
+                    height: 95,
+                    width: 355,
+                    child: Column(
+                      children: [
+                        SizedBox(height: 18),
+                        Row(
+                          children: [
+                            SizedBox(width: 30),
+                            Text(
+                              "Apple Pie", //FOOD NAME
+                              style: Theme.of(context).textTheme.labelSmall,
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 12.0),
+                                child: Text(
+                                  textAlign: TextAlign.end,
+                                  '200cal', //CALORIES
+                                  style: Theme.of(context).textTheme.labelSmall!
+                                      .copyWith(color: AppColor.brand500),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
-                  ),
-                  Divider(color: Colors.grey[250], thickness: 1),
-                  Row(
-                    children: [
-                      SizedBox(width: 30),
-                      Text(
-                        "Daal Chawal", //FOOD NAME
-                        style: Theme.of(context).textTheme.labelSmall,
-                      ),
-                      Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 12.0),
-                          child: Text(
-                            textAlign: TextAlign.end,
-                            '400cal', //CALORIES
-                            style: Theme.of(context).textTheme.labelSmall!
-                                .copyWith(color: AppColor.brand500),
-                          ),
+                        Divider(color: Colors.grey[250], thickness: 1),
+                        Row(
+                          children: [
+                            SizedBox(width: 30),
+                            Text(
+                              "Daal Chawal", //FOOD NAME
+                              style: Theme.of(context).textTheme.labelSmall,
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 12.0),
+                                child: Text(
+                                  textAlign: TextAlign.end,
+                                  '400cal', //CALORIES
+                                  style: Theme.of(context).textTheme.labelSmall!
+                                      .copyWith(color: AppColor.brand500),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-            NavBar(),
           ],
         ),
       ),
