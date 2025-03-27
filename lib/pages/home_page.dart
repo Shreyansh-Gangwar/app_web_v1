@@ -1,6 +1,7 @@
 import 'package:app_web_v1/utilities/colors.dart';
 import 'package:app_web_v1/widgets/button.dart';
 import 'package:app_web_v1/widgets/container.dart';
+import 'package:app_web_v1/widgets/navbar.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatelessWidget {
@@ -266,6 +267,7 @@ class HomePage extends StatelessWidget {
                 ],
               ),
             ),
+            NavBar(),
           ],
         ),
       ),
