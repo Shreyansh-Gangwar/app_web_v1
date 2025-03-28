@@ -2,7 +2,8 @@ import 'package:app_web_v1/utilities/colors.dart';
 import 'package:flutter/material.dart';
 
 class NavBar extends StatefulWidget {
-  const NavBar({super.key});
+  final int page; // 1 = home, 2 = profile
+  const NavBar({super.key, required this.page});
 
   @override
   State<NavBar> createState() => _NavBarState();
@@ -11,34 +12,59 @@ class NavBar extends StatefulWidget {
 class _NavBarState extends State<NavBar> {
   @override
   Widget build(BuildContext context) {
+    bool homeCheck = true;
+    bool profileCheck = false;
+
+    if (widget.page == 1) {
+      setState(() {
+        homeCheck = true;
+        profileCheck = false;
+      });
+    } else if (widget.page == 2) {
+      setState(() {
+        homeCheck = false;
+        profileCheck = true;
+      });
+    }
+
     return Material(
       child: BottomNavigationBar(
         elevation: 0,
         items: [
           BottomNavigationBarItem(
             icon: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                const SizedBox(height: 0, width: 60),
-                Column(
-                  children: [
-                    Text(
-                      'Home',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.headlineMedium!.copyWith(fontSize: 20),
-                    ),
-                    Container(
-                      height: 10,
-                      width: 10,
-                      decoration: BoxDecoration(
-                        color: AppColor.brand500,
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(5),
+                SizedBox(width: 10),
+                homeCheck
+                    ? Column(
+                      children: [
+                        Text(
+                          'Home',
+                          style: Theme.of(
+                            context,
+                          ).textTheme.headlineMedium!.copyWith(fontSize: 20),
                         ),
+                        Container(
+                          height: 10,
+                          width: 10,
+                          decoration: BoxDecoration(
+                            color: AppColor.brand500,
+                            borderRadius: const BorderRadius.all(
+                              Radius.circular(5),
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                    : Text(
+                      'Home',
+                      style: TextStyle(
+                        fontSize: 20,
+                        color: const Color(0xFF6B564D),
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                  ],
-                ),
               ],
             ),
             label: '',
@@ -67,14 +93,35 @@ class _NavBarState extends State<NavBar> {
               child: Row(
                 children: [
                   const SizedBox(height: 0, width: 20),
-                  Text(
-                    'Profile',
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      fontSize: 20,
-                      color: const Color(0xFF6B564D),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+                  profileCheck
+                      ? Column(
+                        children: [
+                          Text(
+                            'Profile',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.headlineMedium!.copyWith(fontSize: 20),
+                          ),
+                          Container(
+                            height: 10,
+                            width: 10,
+                            decoration: BoxDecoration(
+                              color: AppColor.brand500,
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(5),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                      : Text(
+                        'Profile',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: const Color(0xFF6B564D),
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                 ],
               ),
             ),

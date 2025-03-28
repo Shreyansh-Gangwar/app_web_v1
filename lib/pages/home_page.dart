@@ -220,7 +220,9 @@ class HomePage extends StatelessWidget {
             Stack(
               children: [
                 Center(
-                  child: Column(children: [SizedBox(height: 100), NavBar()]),
+                  child: Column(
+                    children: [SizedBox(height: 100), NavBar(page: 1)],
+                  ),
                 ),
                 Center(
                   child: AppContainer(
