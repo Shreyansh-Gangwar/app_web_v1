@@ -144,211 +144,253 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             // ======================= UI FOR STATS PAGE ========================//
-            Column(
-              children: [
-                SizedBox(height: 28),
-                AppContainer(
-                  height: 420,
-                  width: 340,
-                  child: Stack(
-                    children: [
-                      //PROGRESS WHEEL
-                      Column(
+            statsPage
+                ? Column(
+                  children: [
+                    SizedBox(height: 28),
+                    AppContainer(
+                      height: 420,
+                      width: 340,
+                      child: Stack(
                         children: [
-                          SizedBox(height: 40),
-                          Center(
-                            child: SizedBox(
-                              height: 214,
-                              width: 214,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 18,
-                                backgroundColor: Color(0xfff3edea),
-                                valueColor: AlwaysStoppedAnimation(
-                                  AppColor.brand500,
+                          //PROGRESS WHEEL
+                          Column(
+                            children: [
+                              SizedBox(height: 40),
+                              Center(
+                                child: SizedBox(
+                                  height: 214,
+                                  width: 214,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 18,
+                                    backgroundColor: Color(0xfff3edea),
+                                    valueColor: AlwaysStoppedAnimation(
+                                      AppColor.brand500,
+                                    ),
+                                    value: .42, //HERE WILL BE THE FIREBASE DATA
+                                  ),
                                 ),
-                                value: .42, //HERE WILL BE THE FIREBASE DATA
                               ),
-                            ),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              SizedBox(height: 80),
+                              Center(
+                                child: Text(
+                                  'Today', //DATE
+                                  style: TextStyle(
+                                    fontSize: 24,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColor.neutral900,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(height: 20),
+                              Text(
+                                '1000/2500', //CALORIES
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.titleLarge!.copyWith(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                              Text('Calories'),
+                              SizedBox(height: 100),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Column(
+                                    children: [
+                                      Text(
+                                        '50',
+                                        style:
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.titleLarge,
+                                      ),
+                                      Text(
+                                        'Protein',
+                                        style:
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.labelSmall,
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      Text(
+                                        '50',
+                                        style:
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.titleLarge,
+                                      ),
+                                      Text(
+                                        'Carbs',
+                                        style:
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.labelSmall,
+                                      ),
+                                    ],
+                                  ),
+                                  Column(
+                                    children: [
+                                      Text(
+                                        '50',
+                                        style:
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.titleLarge,
+                                      ),
+                                      Text(
+                                        'Fats',
+                                        style:
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.labelSmall,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 20),
+                              Row(
+                                children: [
+                                  SizedBox(width: 50),
+                                  Text(
+                                    "Estrogenic Content:",
+                                    style:
+                                        Theme.of(context).textTheme.labelSmall,
+                                  ),
+                                  SizedBox(width: 50),
+                                  Text(
+                                    'Low', //ESTROGENIC CONTENT
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .labelSmall!
+                                        .copyWith(color: AppColor.brand500),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ],
                       ),
-                      Column(
+                    ),
+                    SizedBox(height: 25),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 50.0),
+                      child: Row(
                         children: [
-                          SizedBox(height: 80),
-                          Center(
-                            child: Text(
-                              'Today', //DATE
-                              style: TextStyle(
-                                fontSize: 24,
-                                fontWeight: FontWeight.w500,
-                                color: AppColor.neutral900,
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: 20),
                           Text(
-                            '1000/2500', //CALORIES
+                            'Last Scanned',
+                            textAlign: TextAlign.left,
                             style: Theme.of(
                               context,
                             ).textTheme.titleLarge!.copyWith(
                               fontSize: 24,
-                              fontWeight: FontWeight.w900,
+                              fontWeight: FontWeight.w400,
                             ),
-                          ),
-                          Text('Calories'),
-                          SizedBox(height: 100),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Column(
-                                children: [
-                                  Text(
-                                    '50',
-                                    style:
-                                        Theme.of(context).textTheme.titleLarge,
-                                  ),
-                                  Text(
-                                    'Protein',
-                                    style:
-                                        Theme.of(context).textTheme.labelSmall,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Text(
-                                    '50',
-                                    style:
-                                        Theme.of(context).textTheme.titleLarge,
-                                  ),
-                                  Text(
-                                    'Carbs',
-                                    style:
-                                        Theme.of(context).textTheme.labelSmall,
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Text(
-                                    '50',
-                                    style:
-                                        Theme.of(context).textTheme.titleLarge,
-                                  ),
-                                  Text(
-                                    'Fats',
-                                    style:
-                                        Theme.of(context).textTheme.labelSmall,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 20),
-                          Row(
-                            children: [
-                              SizedBox(width: 50),
-                              Text(
-                                "Estrogenic Content:",
-                                style: Theme.of(context).textTheme.labelSmall,
-                              ),
-                              SizedBox(width: 50),
-                              Text(
-                                'Low', //ESTROGENIC CONTENT
-                                style: Theme.of(context).textTheme.labelSmall!
-                                    .copyWith(color: AppColor.brand500),
-                              ),
-                            ],
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 25),
-                Padding(
-                  padding: const EdgeInsets.only(left: 50.0),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Last Scanned',
-                        textAlign: TextAlign.left,
-                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 20),
-                Stack(
-                  children: [
-                    Center(
-                      child: Column(
-                        children: [SizedBox(height: 100), NavBar(page: 1)],
-                      ),
                     ),
-                    Center(
-                      child: AppContainer(
-                        height: 95,
-                        width: 355,
-                        child: Column(
-                          children: [
-                            SizedBox(height: 18),
-                            Row(
-                              children: [
-                                SizedBox(width: 30),
-                                Text(
-                                  "Apple Pie", //FOOD NAME
-                                  style: Theme.of(context).textTheme.labelSmall,
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 12.0),
-                                    child: Text(
-                                      textAlign: TextAlign.end,
-                                      '200cal', //CALORIES
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelSmall!
-                                          .copyWith(color: AppColor.brand500),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Divider(color: Colors.grey[250], thickness: 1),
-                            Row(
-                              children: [
-                                SizedBox(width: 30),
-                                Text(
-                                  "Daal Chawal", //FOOD NAME
-                                  style: Theme.of(context).textTheme.labelSmall,
-                                ),
-                                Expanded(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 12.0),
-                                    child: Text(
-                                      textAlign: TextAlign.end,
-                                      '400cal', //CALORIES
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelSmall!
-                                          .copyWith(color: AppColor.brand500),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
+                    SizedBox(height: 20),
+                    Stack(
+                      children: [
+                        Center(
+                          child: Column(
+                            children: [SizedBox(height: 100), NavBar(page: 1)],
+                          ),
                         ),
-                      ),
+                        Center(
+                          child: AppContainer(
+                            height: 95,
+                            width: 355,
+                            child: Column(
+                              children: [
+                                SizedBox(height: 18),
+                                Row(
+                                  children: [
+                                    SizedBox(width: 30),
+                                    Text(
+                                      "Apple Pie", //FOOD NAME
+                                      style:
+                                          Theme.of(
+                                            context,
+                                          ).textTheme.labelSmall,
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 12.0,
+                                        ),
+                                        child: Text(
+                                          textAlign: TextAlign.end,
+                                          '200cal', //CALORIES
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.labelSmall!.copyWith(
+                                            color: AppColor.brand500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Divider(color: Colors.grey[250], thickness: 1),
+                                Row(
+                                  children: [
+                                    SizedBox(width: 30),
+                                    Text(
+                                      "Daal Chawal", //FOOD NAME
+                                      style:
+                                          Theme.of(
+                                            context,
+                                          ).textTheme.labelSmall,
+                                    ),
+                                    Expanded(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                          right: 12.0,
+                                        ),
+                                        child: Text(
+                                          textAlign: TextAlign.end,
+                                          '400cal', //CALORIES
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.labelSmall!.copyWith(
+                                            color: AppColor.brand500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
-                ),
-              ],
-            ),
+                )
+                :
+                // ======================= UI FOR SCANNED PAGE ========================//
+                scannedPage
+                ? Column()
+                :
+                // ======================= UI FOR AI SUGGESTION PAGE ========================//
+                aiSuggestionPage
+                ? Column()
+                :
+                // ======================= UI FOR MONTHLY GOAL PAGE ========================//
+                Column(),
           ],
         ),
       ),
