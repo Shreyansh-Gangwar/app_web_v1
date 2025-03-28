@@ -7,6 +7,7 @@ class Button extends StatelessWidget {
   final double? width;
   final double? radius;
   final Widget text;
+  final GestureTapCallback? onTap;
   const Button({
     super.key,
     this.color,
@@ -14,6 +15,7 @@ class Button extends StatelessWidget {
     this.width,
     required this.text,
     this.radius,
+    this.onTap,
   });
 
   @override
@@ -42,7 +44,7 @@ class Button extends StatelessWidget {
               ? BorderRadius.circular(radius as double)
               : BorderRadius.circular(25),
       child: InkWell(
-        onTap: () {},
+        onTap: onTap,
         child: Container(
           height: heightCheck ? height : 50,
           width: widthCheck ? width : 150,
