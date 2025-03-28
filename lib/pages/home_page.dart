@@ -383,7 +383,38 @@ class _HomePageState extends State<HomePage> {
                 :
                 // ======================= UI FOR SCANNED PAGE ========================//
                 scannedPage
-                ? Column()
+                ? Column(
+                  children: [
+                    SizedBox(height: 50),
+                    SizedBox(
+                      width: 320,
+                      child: Text(
+                        textAlign: TextAlign.left,
+                        'Last Scanned',
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+
+                    SizedBox(height: 10),
+
+                    ListView.builder(
+                      itemBuilder: (context, index) {
+                        return AppContainer(
+                          height: 90,
+                          width: 350,
+                          child: SizedBox(),
+                        );
+                      },
+                      itemCount: 5,
+                      shrinkWrap: true,
+                    ),
+
+                    NavBar(page: 1),
+                  ],
+                )
                 :
                 // ======================= UI FOR AI SUGGESTION PAGE ========================//
                 aiSuggestionPage
