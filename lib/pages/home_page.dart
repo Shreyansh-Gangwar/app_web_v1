@@ -474,7 +474,24 @@ class _HomePageState extends State<HomePage> {
               aiSuggestionPage
               ? SizedBox(
                 height: MediaQuery.of(context).size.height * .65,
-                child: Column(),
+                child: Column(
+                  children: [
+                    SizedBox(height: 50),
+                    SizedBox(
+                      width: 320,
+                      child: Text(
+                        textAlign: TextAlign.left,
+                        'AI Suggestions',
+                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                    AppContainer(height: 300, width: 350, child: SizedBox()),
+                  ],
+                ),
               )
               :
               // ======================= UI FOR MONTHLY GOAL PAGE ========================//
