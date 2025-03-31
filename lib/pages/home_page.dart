@@ -121,23 +121,23 @@ class _HomePageState extends State<HomePage> {
                   },
                 ),
                 SizedBox(width: 10),
-                Button(
-                  text: Text(
-                    'Monthly Goal',
-                    style:
-                        monthlyGoalPage
-                            ? Theme.of(context).textTheme.labelMedium
-                            : Theme.of(context).textTheme.labelLarge,
-                  ),
-                  color: monthlyGoalPage ? AppColor.brand500 : AppColor.bgcolor,
-                  height: 32,
-                  onTap: () {
-                    setState(() {
-                      page = 4;
-                    });
-                  },
-                ),
-                SizedBox(width: 30),
+                // Button(
+                //   text: Text(
+                //     'Monthly Goal',
+                //     style:
+                //         monthlyGoalPage
+                //             ? Theme.of(context).textTheme.labelMedium
+                //             : Theme.of(context).textTheme.labelLarge,
+                //   ),
+                //   color: monthlyGoalPage ? AppColor.brand500 : AppColor.bgcolor,
+                //   height: 32,
+                //   onTap: () {
+                //     setState(() {
+                //       page = 4;
+                //     });
+                //   },
+                // ),
+                // SizedBox(width: 30),
               ],
             ),
           ),
@@ -471,8 +471,7 @@ class _HomePageState extends State<HomePage> {
               )
               :
               // ======================= UI FOR AI SUGGESTION PAGE ========================//
-              aiSuggestionPage
-              ? SizedBox(
+              SizedBox(
                 height: MediaQuery.of(context).size.height * .65,
                 child: Column(
                   children: [
@@ -489,13 +488,38 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     SizedBox(height: 20),
-                    AppContainer(height: 300, width: 350, child: SizedBox()),
+                    AppContainer(
+                      height: 350,
+                      width: 350,
+                      child: Column(
+                        children: [
+                          SizedBox(height: 20),
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(left: 25.0),
+                                child: Image.asset(
+                                  'assets/images/AI.png',
+                                  width: 50,
+                                ),
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 20),
+                          Text(
+                            'Apple Pie', //FOOD NAME
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
-              )
-              :
-              // ======================= UI FOR MONTHLY GOAL PAGE ========================//
-              Column(),
+              ),
+          // ======================= UI FOR MONTHLY GOAL PAGE ========================//
+          // SizedBox(
+          //   height: MediaQuery.sizeOf(context).height * .65,
+          //   child: Column(),
+          // ),
           NavBar(page: 1),
         ],
       ),
