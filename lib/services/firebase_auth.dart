@@ -33,7 +33,7 @@ class AuthMethod {
           'name': name,
           'uid': cred.user!.uid,
           'email': email,
-          'password': password,
+          'scanned': 0,
         });
 
         res = "success";
