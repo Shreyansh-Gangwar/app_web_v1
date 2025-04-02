@@ -1,7 +1,10 @@
+import 'package:app_web_v1/services/firebase_auth.dart';
+import 'package:app_web_v1/services/firestore.dart';
 import 'package:app_web_v1/utilities/colors.dart';
 import 'package:app_web_v1/widgets/button.dart';
 import 'package:app_web_v1/widgets/container.dart';
 import 'package:app_web_v1/widgets/navbar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,15 +21,30 @@ class _HomePageState extends State<HomePage> {
   bool scannedPage = false;
   bool aiSuggestionPage = false;
   bool monthlyGoalPage = false;
+  bool isLoggedIn = false;
+  Map<String, dynamic>? userData = {};
+  String userName = '';
+  @override
+  void initState() {
+    super.initState();
+    _initializeState();
+  }
+
+  Future<void> _initializeState() async {
+    isLoggedIn = await AuthMethod().isLoggedIn();
+    if (isLoggedIn) {
+      userData = await Firestore().getUserData();
+      userName = userData!['name'];
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     //=============================================== LOGIC ===================================================//
-    setState(() {
-      statsPage = page == 1;
-      scannedPage = page == 2;
-      aiSuggestionPage = page == 3;
-      monthlyGoalPage = page == 4;
-    });
+    statsPage = page == 1;
+    scannedPage = page == 2;
+    aiSuggestionPage = page == 3;
+    monthlyGoalPage = page == 4;
 
     //=============================================== UI ===================================================//
     return Scaffold(
@@ -39,7 +57,7 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   SizedBox(
                     child: Text(
-                      "Hey Shreyansh", //USER NAME
+                      isLoggedIn ? "Hey $userName" : "Hey User", //USER NAME
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
@@ -57,7 +75,9 @@ class _HomePageState extends State<HomePage> {
                 radius: 25,
                 backgroundColor: Colors.grey[200],
                 child: Image.asset(
-                  'assets/images/user.png',
+                  isLoggedIn
+                      ? userData!['profileImage'] ?? 'assets/images/user.png'
+                      : 'assets/images/user.png', //USER IMAGE
                   width: 35,
                 ), //USER IMAGE
               ),

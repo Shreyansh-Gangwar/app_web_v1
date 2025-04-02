@@ -97,4 +97,13 @@ class AuthMethod {
     }
     return res;
   }
+
+  Future<bool> isLoggedIn() async {
+    User? user = _auth.currentUser;
+    if (user != null) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

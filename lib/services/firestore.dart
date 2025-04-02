@@ -11,6 +11,7 @@ class Firestore {
     try {
       DocumentSnapshot doc =
           await _firestore.collection('users').doc(AuthMethod.uid).get();
+      log("User data fetched: ${doc.data() as Map<String, dynamic>?}");
       return doc.data() as Map<String, dynamic>?;
     } catch (e) {
       log("Error fetching user data: $e");
