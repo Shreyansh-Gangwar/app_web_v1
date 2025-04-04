@@ -1,4 +1,5 @@
 import 'package:app_web_v1/utilities/colors.dart';
+import 'package:app_web_v1/utilities/routes.dart';
 import 'package:flutter/material.dart';
 
 class NavBar extends StatefulWidget {
@@ -32,40 +33,45 @@ class _NavBarState extends State<NavBar> {
         elevation: 0,
         items: [
           BottomNavigationBarItem(
-            icon: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                SizedBox(width: 10),
-                homeCheck
-                    ? Column(
-                      children: [
-                        Text(
-                          'Home',
-                          style: Theme.of(
-                            context,
-                          ).textTheme.headlineMedium!.copyWith(fontSize: 20),
-                        ),
-                        Container(
-                          height: 10,
-                          width: 10,
-                          decoration: BoxDecoration(
-                            color: AppColor.brand500,
-                            borderRadius: const BorderRadius.all(
-                              Radius.circular(5),
+            icon: InkWell(
+              onTap: () {
+                Navigator.of(context).pushNamed(AppRoutes.home);
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(width: 10),
+                  homeCheck
+                      ? Column(
+                        children: [
+                          Text(
+                            'Home',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.headlineMedium!.copyWith(fontSize: 20),
+                          ),
+                          Container(
+                            height: 10,
+                            width: 10,
+                            decoration: BoxDecoration(
+                              color: AppColor.brand500,
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(5),
+                              ),
                             ),
                           ),
+                        ],
+                      )
+                      : Text(
+                        'Home',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: const Color(0xFF6B564D),
+                          fontWeight: FontWeight.bold,
                         ),
-                      ],
-                    )
-                    : Text(
-                      'Home',
-                      style: TextStyle(
-                        fontSize: 20,
-                        color: const Color(0xFF6B564D),
-                        fontWeight: FontWeight.bold,
                       ),
-                    ),
-              ],
+                ],
+              ),
             ),
             label: '',
           ),
@@ -89,7 +95,9 @@ class _NavBarState extends State<NavBar> {
           ),
           BottomNavigationBarItem(
             icon: InkWell(
-              onTap: () {}, // Add the route name
+              onTap: () {
+                Navigator.of(context).pushNamed(AppRoutes.profile);
+              },
               child: Row(
                 children: [
                   const SizedBox(height: 0, width: 20),

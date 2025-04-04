@@ -1,4 +1,6 @@
 import 'package:app_web_v1/firebase_options.dart';
+import 'package:app_web_v1/pages/profile_page.dart';
+import 'package:app_web_v1/utilities/routes.dart';
 import 'package:app_web_v1/utilities/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -21,6 +23,11 @@ class MyApp extends StatelessWidget {
 
       debugShowCheckedModeBanner: false,
       home: HomePage(),
+      initialRoute: AppRoutes.home,
+      routes: {
+        AppRoutes.home: (context) => const HomePage(),
+        AppRoutes.profile: (context) => const ProfilePage(),
+      },
     );
   }
 }

@@ -4,8 +4,11 @@ import 'package:app_web_v1/utilities/colors.dart';
 import 'package:app_web_v1/widgets/button.dart';
 import 'package:app_web_v1/widgets/container.dart';
 import 'package:app_web_v1/widgets/navbar.dart';
+import 'package:app_web_v1/widgets/snackbar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -24,6 +27,7 @@ class _HomePageState extends State<HomePage> {
   bool isLoggedIn = false;
   Map<String, dynamic>? userData = {};
   String userName = '';
+  bool isCopied = false;
   @override
   void initState() {
     super.initState();
@@ -72,7 +76,7 @@ class _HomePageState extends State<HomePage> {
 
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.only(right: 50.0),
+                  padding: const EdgeInsets.only(right: 30.0),
                   child: CircleAvatar(
                     radius: 25,
                     backgroundColor: Colors.grey[200],
@@ -536,6 +540,31 @@ class _HomePageState extends State<HomePage> {
                           ),
                         ],
                       ),
+                    ),
+                    SizedBox(height: 20),
+                    Button(
+                      text: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.copy, color: Colors.white),
+                          SizedBox(width: 10),
+                          Text(
+                            'Copy to clipboard',
+                            style: TextStyle(color: Colors.white, fontSize: 16),
+                          ),
+                        ],
+                      ),
+                      width: 200,
+                      onTap: () {
+                        Clipboard.setData(ClipboardData(text: "Apple Pie"));
+                        showSnackBar(
+                          context,
+                          "Text has been copied to clipboard",
+                        );
+                        setState(() {
+                          isCopied = true;
+                        });
+                      },
                     ),
                   ],
                 ),
