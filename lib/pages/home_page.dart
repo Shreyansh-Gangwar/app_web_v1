@@ -53,33 +53,38 @@ class _HomePageState extends State<HomePage> {
           const SizedBox(height: 80),
           Row(
             children: [
-              Column(
-                children: [
-                  SizedBox(
-                    child: Text(
+              Padding(
+                padding: const EdgeInsets.only(left: 50.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
                       isLoggedIn ? "Hey $userName" : "Hey User", //USER NAME
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 50.0),
-                    child: Text(
+                    Text(
                       'Start your day with a healthy meal !',
                       style: Theme.of(context).textTheme.labelSmall,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-              SizedBox(width: 30),
-              CircleAvatar(
-                radius: 25,
-                backgroundColor: Colors.grey[200],
-                child: Image.asset(
-                  isLoggedIn
-                      ? userData!['profileImage'] ?? 'assets/images/user.png'
-                      : 'assets/images/user.png', //USER IMAGE
-                  width: 35,
-                ), //USER IMAGE
+
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.only(right: 50.0),
+                  child: CircleAvatar(
+                    radius: 25,
+                    backgroundColor: Colors.grey[200],
+                    child: Image.asset(
+                      isLoggedIn
+                          ? userData!['profileImage'] ??
+                              'assets/images/user.png'
+                          : 'assets/images/user.png', //USER IMAGE
+                      width: 35,
+                    ), //USER IMAGE
+                  ),
+                ),
               ),
             ],
           ),
