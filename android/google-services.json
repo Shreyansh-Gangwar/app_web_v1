@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "683453713493",
+    "project_id": "ultimaapps1",
+    "storage_bucket": "ultimaapps1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:683453713493:android:1f4d73e712df164ea818dc",
+        "android_client_info": {
+          "package_name": "com.example.app_web_v1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "683453713493-l2nvjsmofdc62ls5rl2uqdott7i6oo36.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.app_web_v1",
+            "certificate_hash": "9489ee37ed3618f0f552dba6bd6d9aaf50aefce4"
+          }
+        },
+        {
+          "client_id": "683453713493-vbp9n72chqj2b2krmjcnvm259s5afijn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCJ0WRn5y8W-vDRKWmAcX7oTYzcVislVCc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "683453713493-vbp9n72chqj2b2krmjcnvm259s5afijn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "683453713493-ckob9gsrmfk0is1332htaau82b5hjhat.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.appWebV1"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

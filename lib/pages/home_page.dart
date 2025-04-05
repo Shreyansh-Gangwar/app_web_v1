@@ -1,12 +1,11 @@
 import 'package:app_web_v1/services/firebase_auth.dart';
 import 'package:app_web_v1/services/firestore.dart';
 import 'package:app_web_v1/utilities/colors.dart';
+import 'package:app_web_v1/utilities/routes.dart';
 import 'package:app_web_v1/widgets/button.dart';
 import 'package:app_web_v1/widgets/container.dart';
 import 'package:app_web_v1/widgets/navbar.dart';
 import 'package:app_web_v1/widgets/snackbar.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -77,16 +76,21 @@ class _HomePageState extends State<HomePage> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(right: 30.0),
-                  child: CircleAvatar(
-                    radius: 25,
-                    backgroundColor: Colors.grey[200],
-                    child: Image.asset(
-                      isLoggedIn
-                          ? userData!['profileImage'] ??
-                              'assets/images/user.png'
-                          : 'assets/images/user.png', //USER IMAGE
-                      width: 35,
-                    ), //USER IMAGE
+                  child: InkWell(
+                    child: CircleAvatar(
+                      radius: 25,
+                      backgroundColor: Colors.grey[200],
+                      child: Image.asset(
+                        isLoggedIn
+                            ? userData!['profileImage'] ??
+                                'assets/images/user.png'
+                            : 'assets/images/user.png', //USER IMAGE
+                        width: 35,
+                      ), //USER IMAGE
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pushNamed(AppRoutes.profile);
+                    },
                   ),
                 ),
               ),
@@ -536,7 +540,7 @@ class _HomePageState extends State<HomePage> {
                           ),
                           SizedBox(height: 20),
                           Text(
-                            'Apple Pie', //FOOD NAME
+                            'Apple Pie', //AI GENERATED TEXT
                           ),
                         ],
                       ),
@@ -546,23 +550,33 @@ class _HomePageState extends State<HomePage> {
                       text: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.copy, color: Colors.white),
+                          Icon(
+                            isCopied ? Icons.check : Icons.copy,
+                            color: Colors.white,
+                          ),
                           SizedBox(width: 10),
                           Text(
-                            'Copy to clipboard',
+                            isCopied ? 'Copied' : 'Copy to clipboard',
                             style: TextStyle(color: Colors.white, fontSize: 16),
                           ),
                         ],
                       ),
                       width: 200,
                       onTap: () {
-                        Clipboard.setData(ClipboardData(text: "Apple Pie"));
+                        Clipboard.setData(
+                          ClipboardData(text: "Apple Pie"),
+                        ); //AI GENERATED TEXT SAME AS DISPLAYED
                         showSnackBar(
                           context,
                           "Text has been copied to clipboard",
                         );
                         setState(() {
                           isCopied = true;
+                        });
+                        Future.delayed(const Duration(seconds: 5), () {
+                          setState(() {
+                            isCopied = false;
+                          });
                         });
                       },
                     ),

@@ -19,6 +19,24 @@ class Firestore {
     }
   }
 
+  initialDataSet() {
+    _firestore
+        .collection('users')
+        .doc(AuthMethod.uid)
+        .set({
+          'name': 'test',
+          'scannedCount': 0,
+          'savedCount': 0,
+          'joiningDate': Timestamp.now(),
+        })
+        .then((value) {
+          log("Successfully set initial data");
+        })
+        .catchError((error) {
+          log("Failed to set initial data: $error");
+        });
+  }
+
   sendData() {
     _firestore
         .collection('users')
