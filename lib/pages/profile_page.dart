@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:app_web_v1/services/firebase_auth.dart';
 import 'package:app_web_v1/services/firestore.dart';
 import 'package:app_web_v1/utilities/colors.dart';
@@ -34,175 +32,127 @@ class _ProfilePageState extends State<ProfilePage> {
     isLoggedIn = await AuthMethod().isLoggedIn();
     if (isLoggedIn) {
       userData = await Firestore().getUserData();
-      userName = userData!['name'];
-      joiningDateTimestamp = userData!['joiningDate'];
-      joiningDate = joiningDateTimestamp.toDate().toString().split(' ')[0];
-      log("Joining date: $joiningDate");
-      daysCount =
-          DateTime.now().difference(joiningDateTimestamp.toDate()).inDays;
+      if (userData != null) {
+        userName = userData!['name'];
+        Timestamp joiningDateTimestamp = userData!['joiningDate'];
+        joiningDate = joiningDateTimestamp.toDate().toString().split(' ')[0];
+        daysCount =
+            DateTime.now().difference(joiningDateTimestamp.toDate()).inDays;
+      }
     }
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    if (!isLoggedIn) {
-      return Scaffold(
-        body: Center(
-          child: Text(
-            'Please log in to view your profile.',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-        ),
-      );
-    }
     return Scaffold(
       body: Center(
-        child: Column(
+        child: isLoggedIn ? _buildProfileContent() : _buildSignInButton(),
+      ),
+    );
+  }
+
+  Widget _buildProfileContent() {
+    return Column(
+      children: [
+        const SizedBox(height: 50),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(height: 50),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 20),
-                  child: IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                ),
-                Expanded(child: SizedBox()),
-                IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () async {},
-                  color: AppColor.brand500,
-                ),
-                SizedBox(width: 20),
-              ],
+            IconButton(
+              icon: const Icon(Icons.arrow_back_ios_new),
+              onPressed: () => Navigator.pop(context),
             ),
-            SizedBox(height: 30),
-            Row(
-              children: [
-                SizedBox(width: 50),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      userName, //USER NAME
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    RichText(
-                      text: TextSpan(
-                        text: 'Joined on ',
-                        style: Theme.of(context).textTheme.labelSmall,
-                        children: <TextSpan>[
-                          TextSpan(
-                            text: joiningDate,
-                            style: Theme.of(context).textTheme.labelLarge,
-                          ),
-                        ],
-                      ),
-                    ), //JOIN DATE
-                  ],
-                ),
-                Expanded(child: SizedBox()),
-                Padding(
-                  padding: const EdgeInsets.only(right: 20),
-                  child: CircleAvatar(
-                    radius: 40,
-                    backgroundColor: Colors.grey[200],
-                    child: Image.asset(
-                      isLoggedIn
-                          ? userData!['profileImage'] ??
-                              'assets/images/user.png'
-                          : 'assets/images/user.png', //USER IMAGE
-                      width: 55,
-                    ), //USER IMAGE
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Divider(color: AppColor.brand500, thickness: 1),
-            SizedBox(height: 35),
-            SizedBox(
-              width: 320,
-              child: Text(
-                textAlign: TextAlign.left,
-                'Stats',
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            SizedBox(height: 35),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Column(
-                  children: [
-                    Text(
-                      isLoggedIn ? userData!['scannedCount'].toString() : '0',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      'Scanned',
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text(
-                      isLoggedIn ? userData!['savedCount'].toString() : '0',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      'Saved',
-                      style: Theme.of(context).textTheme.labelSmall,
-                    ),
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text(
-                      isLoggedIn ? daysCount.toString() : '0',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    SizedBox(height: 5),
-                    Text('Days', style: Theme.of(context).textTheme.labelSmall),
-                  ],
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Button(
-              text: Text('Sign in (G)', style: TextStyle(color: Colors.white)),
-              onTap: () async {
-                await AuthMethod().signinwithGoogle(context);
-                setState(() async {
-                  isLoggedIn = await AuthMethod().isLoggedIn();
-                  Firestore().initialDataSet();
-                });
-              },
-            ),
-            SizedBox(height: 20),
-            Button(
-              text: Text('Sign out (G)', style: TextStyle(color: Colors.white)),
-              onTap: () async {
-                await AuthMethod().signOut();
-                setState(() async {
-                  isLoggedIn = await AuthMethod().isLoggedIn();
-                });
-              },
+            IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: () {},
+              color: AppColor.brand500,
             ),
           ],
         ),
-      ),
+        const SizedBox(height: 30),
+        Row(
+          children: [
+            const SizedBox(width: 50),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(userName, style: Theme.of(context).textTheme.titleLarge),
+                RichText(
+                  text: TextSpan(
+                    text: 'Joined on ',
+                    style: Theme.of(context).textTheme.labelSmall,
+                    children: [
+                      TextSpan(
+                        text: joiningDate,
+                        style: Theme.of(context).textTheme.labelLarge,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const Spacer(),
+            CircleAvatar(
+              radius: 40,
+              backgroundColor: Colors.grey[200],
+              child: Image.asset(
+                userData?['profileImage'] ?? 'assets/images/user.png',
+                width: 55,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+        Divider(color: AppColor.brand500, thickness: 1),
+        const SizedBox(height: 35),
+        _buildStats(),
+        const SizedBox(height: 20),
+        Button(
+          text: const Text(
+            'Sign out (G)',
+            style: TextStyle(color: Colors.white),
+          ),
+          onTap: () async {
+            await AuthMethod().signOut();
+            setState(() {
+              isLoggedIn = false;
+              userData = null;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStats() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildStatItem(userData?['scannedCount']?.toString() ?? '0', 'Scanned'),
+        _buildStatItem(userData?['savedCount']?.toString() ?? '0', 'Saved'),
+        _buildStatItem(daysCount.toString(), 'Days'),
+      ],
+    );
+  }
+
+  Widget _buildStatItem(String value, String label) {
+    return Column(
+      children: [
+        Text(value, style: Theme.of(context).textTheme.titleLarge),
+        const SizedBox(height: 5),
+        Text(label, style: Theme.of(context).textTheme.labelSmall),
+      ],
+    );
+  }
+
+  Widget _buildSignInButton() {
+    return Button(
+      text: const Text('Sign in (G)', style: TextStyle(color: Colors.white)),
+      onTap: () async {
+        await AuthMethod().signinwithGoogle(context);
+        _initializeState();
+      },
     );
   }
 }

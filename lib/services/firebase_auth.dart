@@ -11,7 +11,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthMethod {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  static String uid = '';
+  static String uid = '1';
 
   // Sign up user with email & password
 
@@ -83,7 +83,7 @@ class AuthMethod {
       );
       await FirebaseAuth.instance.signInWithCredential(userCred);
       uid = FirebaseAuth.instance.currentUser!.uid;
-      await _firestore.collection("users").doc(uid).set({
+      await _firestore.collection("users").doc(uid).update({
         'uid': FirebaseAuth.instance.currentUser!.uid,
         'email': FirebaseAuth.instance.currentUser!.email,
       });

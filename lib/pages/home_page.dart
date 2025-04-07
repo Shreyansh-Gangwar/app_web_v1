@@ -9,6 +9,8 @@ import 'package:app_web_v1/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+enum PageType { stats, scanned, aiSuggestion }
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -17,16 +19,12 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int page =
-      1; // PAGE NUMBER FOR UPPER BAR 1. STATS 2. Scanned 3. AI Suggestion 4. Monthly Goal
-  bool statsPage = true;
-  bool scannedPage = false;
-  bool aiSuggestionPage = false;
-  bool monthlyGoalPage = false;
+  PageType currentPage = PageType.stats;
   bool isLoggedIn = false;
-  Map<String, dynamic>? userData = {};
+  Map<String, dynamic>? userData;
   String userName = '';
   bool isCopied = false;
+
   @override
   void initState() {
     super.initState();
@@ -37,560 +35,411 @@ class _HomePageState extends State<HomePage> {
     isLoggedIn = await AuthMethod().isLoggedIn();
     if (isLoggedIn) {
       userData = await Firestore().getUserData();
-      userName = userData!['name'];
+      userName = userData?['name'] ?? 'User';
     }
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    //=============================================== LOGIC ===================================================//
-    statsPage = page == 1;
-    scannedPage = page == 2;
-    aiSuggestionPage = page == 3;
-    monthlyGoalPage = page == 4;
-
-    //=============================================== UI ===================================================//
     return Scaffold(
       body: Column(
         children: [
           const SizedBox(height: 80),
-          Row(
+          _buildHeader(context),
+          const SizedBox(height: 25),
+          _buildPageSelector(context),
+          Expanded(child: _buildPageContent(context)),
+          NavBar(page: 1),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    return Row(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 50.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 50.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              Text(
+                isLoggedIn ? "Hey $userName" : "Hey User",
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              Text(
+                'Start your day with a healthy meal!',
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
+            ],
+          ),
+        ),
+        const Spacer(),
+        Padding(
+          padding: const EdgeInsets.only(right: 30.0),
+          child: InkWell(
+            onTap: () => Navigator.of(context).pushNamed(AppRoutes.profile),
+            child: CircleAvatar(
+              radius: 25,
+              backgroundColor: Colors.grey[200],
+              child: Image.asset(
+                isLoggedIn && userData != null
+                    ? userData!['profileImage']
+                    : 'assets/images/user.png',
+                width: 35,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPageSelector(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          const SizedBox(width: 30),
+          _buildPageButton(context, 'Stats', PageType.stats),
+          const SizedBox(width: 10),
+          _buildPageButton(context, 'Scanned', PageType.scanned),
+          const SizedBox(width: 10),
+          _buildPageButton(context, 'AI Suggestion', PageType.aiSuggestion),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPageButton(BuildContext context, String title, PageType page) {
+    final isSelected = currentPage == page;
+    return Button(
+      text: Text(
+        title,
+        style:
+            isSelected
+                ? Theme.of(context).textTheme.labelMedium
+                : Theme.of(context).textTheme.labelLarge,
+      ),
+      color: isSelected ? AppColor.brand500 : AppColor.bgcolor,
+      height: 32,
+      onTap: () => setState(() => currentPage = page),
+    );
+  }
+
+  Widget _buildPageContent(BuildContext context) {
+    switch (currentPage) {
+      case PageType.stats:
+        return _buildStatsPage(context);
+      case PageType.scanned:
+        return _buildScannedPage(context);
+      case PageType.aiSuggestion:
+        return _buildAISuggestionPage(context);
+    }
+  }
+
+  Widget _buildStatsPage(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          const SizedBox(height: 28),
+          AppContainer(
+            height: 420,
+            width: 340,
+            child: Stack(
+              children: [
+                Column(
                   children: [
-                    Text(
-                      isLoggedIn ? "Hey $userName" : "Hey User", //USER NAME
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
-                    Text(
-                      'Start your day with a healthy meal !',
-                      style: Theme.of(context).textTheme.labelSmall,
+                    const SizedBox(height: 40),
+                    Center(
+                      child: SizedBox(
+                        height: 214,
+                        width: 214,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 18,
+                          backgroundColor: const Color(0xfff3edea),
+                          valueColor: AlwaysStoppedAnimation(AppColor.brand500),
+                          value: 0.42,
+                        ),
+                      ),
                     ),
                   ],
                 ),
-              ),
-
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(right: 30.0),
-                  child: InkWell(
-                    child: CircleAvatar(
-                      radius: 25,
-                      backgroundColor: Colors.grey[200],
-                      child: Image.asset(
-                        isLoggedIn
-                            ? userData!['profileImage'] ??
-                                'assets/images/user.png'
-                            : 'assets/images/user.png', //USER IMAGE
-                        width: 35,
-                      ), //USER IMAGE
+                Column(
+                  children: [
+                    const SizedBox(height: 80),
+                    Center(
+                      child: Text(
+                        'Today',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.w500,
+                          color: AppColor.neutral900,
+                        ),
+                      ),
                     ),
-                    onTap: () {
-                      Navigator.of(context).pushNamed(AppRoutes.profile);
-                    },
-                  ),
+                    const SizedBox(height: 20),
+                    Text(
+                      '1000/2500',
+                      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const Text('Calories'),
+                    const SizedBox(height: 100),
+                    _buildNutrientRow(context),
+                    const SizedBox(height: 20),
+                    _buildEstrogenicContentRow(context),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 25),
+          _buildLastScannedSection(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildNutrientRow(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _buildNutrientColumn(context, '50', 'Protein'),
+        _buildNutrientColumn(context, '50', 'Carbs'),
+        _buildNutrientColumn(context, '50', 'Fats'),
+      ],
+    );
+  }
+
+  Widget _buildNutrientColumn(
+    BuildContext context,
+    String value,
+    String label,
+  ) {
+    return Column(
+      children: [
+        Text(value, style: Theme.of(context).textTheme.titleLarge),
+        Text(label, style: Theme.of(context).textTheme.labelSmall),
+      ],
+    );
+  }
+
+  Widget _buildEstrogenicContentRow(BuildContext context) {
+    return Row(
+      children: [
+        const SizedBox(width: 50),
+        Text(
+          "Estrogenic Content:",
+          style: Theme.of(context).textTheme.labelSmall,
+        ),
+        const SizedBox(width: 50),
+        Text(
+          'Low',
+          style: Theme.of(
+            context,
+          ).textTheme.labelSmall!.copyWith(color: AppColor.brand500),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLastScannedSection(BuildContext context) {
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 50.0),
+          child: Row(
+            children: [
+              Text(
+                'Last Scanned',
+                textAlign: TextAlign.left,
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w400,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 25),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
+        ),
+        const SizedBox(height: 20),
+        Center(
+          child: AppContainer(
+            height: 95,
+            width: 355,
+            child: Column(
               children: [
-                SizedBox(width: 30),
-                Button(
-                  text: Text(
-                    'Stats',
-                    style:
-                        statsPage
-                            ? Theme.of(context).textTheme.labelMedium
-                            : Theme.of(context).textTheme.labelLarge,
-                  ),
-                  color: statsPage ? AppColor.brand500 : AppColor.bgcolor,
-                  height: 32,
-                  onTap: () {
-                    setState(() {
-                      page = 1;
-                    });
-                  },
-                ),
-                SizedBox(width: 10),
-                Button(
-                  text: Text(
-                    'Scanned',
-                    style:
-                        scannedPage
-                            ? Theme.of(context).textTheme.labelMedium
-                            : Theme.of(context).textTheme.labelLarge,
-                  ),
-                  color: scannedPage ? AppColor.brand500 : AppColor.bgcolor,
-                  height: 32,
-                  onTap: () {
-                    setState(() {
-                      page = 2;
-                    });
-                  },
-                ),
-                SizedBox(width: 10),
-                Button(
-                  text: Text(
-                    'AI Suggestion',
-                    style:
-                        aiSuggestionPage
-                            ? Theme.of(context).textTheme.labelMedium
-                            : Theme.of(context).textTheme.labelLarge,
-                  ),
-                  color:
-                      aiSuggestionPage ? AppColor.brand500 : AppColor.bgcolor,
-                  height: 32,
-                  onTap: () {
-                    setState(() {
-                      page = 3;
-                    });
-                  },
-                ),
-                SizedBox(width: 10),
-                // Button(
-                //   text: Text(
-                //     'Monthly Goal',
-                //     style:
-                //         monthlyGoalPage
-                //             ? Theme.of(context).textTheme.labelMedium
-                //             : Theme.of(context).textTheme.labelLarge,
-                //   ),
-                //   color: monthlyGoalPage ? AppColor.brand500 : AppColor.bgcolor,
-                //   height: 32,
-                //   onTap: () {
-                //     setState(() {
-                //       page = 4;
-                //     });
-                //   },
-                // ),
-                // SizedBox(width: 30),
+                const SizedBox(height: 18),
+                _buildScannedItem(context, "Apple Pie", "200cal"),
+                Divider(color: Colors.grey[250], thickness: 1),
+                _buildScannedItem(context, "Daal Chawal", "400cal"),
               ],
             ),
           ),
-          // ======================= UI FOR STATS PAGE ========================//
-          statsPage
-              ? SizedBox(
-                height: MediaQuery.of(context).size.height * .65,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(height: 28),
-                      AppContainer(
-                        height: 420,
-                        width: 340,
-                        child: Stack(
+        ),
+      ],
+    );
+  }
+
+  Widget _buildScannedItem(BuildContext context, String name, String calories) {
+    return Row(
+      children: [
+        const SizedBox(width: 30),
+        Text(name, style: Theme.of(context).textTheme.labelSmall),
+        const Spacer(),
+        Padding(
+          padding: const EdgeInsets.only(right: 12.0),
+          child: Text(
+            calories,
+            style: Theme.of(
+              context,
+            ).textTheme.labelSmall!.copyWith(color: AppColor.brand500),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildScannedPage(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          const SizedBox(height: 50),
+          SizedBox(
+            width: 320,
+            child: Text(
+              'Last Scanned',
+              textAlign: TextAlign.left,
+              style: Theme.of(context).textTheme.titleLarge!.copyWith(
+                fontSize: 24,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: 3,
+            itemBuilder: (context, index) {
+              return Column(
+                children: [
+                  AppContainer(
+                    height: 90,
+                    width: 350,
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 25),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            //PROGRESS WHEEL
-                            Column(
-                              children: [
-                                SizedBox(height: 40),
-                                Center(
-                                  child: SizedBox(
-                                    height: 214,
-                                    width: 214,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 18,
-                                      backgroundColor: Color(0xfff3edea),
-                                      valueColor: AlwaysStoppedAnimation(
-                                        AppColor.brand500,
-                                      ),
-                                      value:
-                                          .42, //HERE WILL BE THE FIREBASE DATA
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Column(
-                              children: [
-                                SizedBox(height: 80),
-                                Center(
-                                  child: Text(
-                                    'Today', //DATE
-                                    style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColor.neutral900,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 20),
-                                Text(
-                                  '1000/2500', //CALORIES
-                                  style: Theme.of(
-                                    context,
-                                  ).textTheme.titleLarge!.copyWith(
-                                    fontSize: 24,
-                                    fontWeight: FontWeight.w900,
-                                  ),
-                                ),
-                                Text('Calories'),
-                                SizedBox(height: 100),
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: [
-                                    Column(
-                                      children: [
-                                        Text(
-                                          '50',
-                                          style:
-                                              Theme.of(
-                                                context,
-                                              ).textTheme.titleLarge,
-                                        ),
-                                        Text(
-                                          'Protein',
-                                          style:
-                                              Theme.of(
-                                                context,
-                                              ).textTheme.labelSmall,
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      children: [
-                                        Text(
-                                          '50',
-                                          style:
-                                              Theme.of(
-                                                context,
-                                              ).textTheme.titleLarge,
-                                        ),
-                                        Text(
-                                          'Carbs',
-                                          style:
-                                              Theme.of(
-                                                context,
-                                              ).textTheme.labelSmall,
-                                        ),
-                                      ],
-                                    ),
-                                    Column(
-                                      children: [
-                                        Text(
-                                          '50',
-                                          style:
-                                              Theme.of(
-                                                context,
-                                              ).textTheme.titleLarge,
-                                        ),
-                                        Text(
-                                          'Fats',
-                                          style:
-                                              Theme.of(
-                                                context,
-                                              ).textTheme.labelSmall,
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 20),
-                                Row(
-                                  children: [
-                                    SizedBox(width: 50),
-                                    Text(
-                                      "Estrogenic Content:",
-                                      style:
-                                          Theme.of(
-                                            context,
-                                          ).textTheme.labelSmall,
-                                    ),
-                                    SizedBox(width: 50),
-                                    Text(
-                                      'Low', //ESTROGENIC CONTENT
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .labelSmall!
-                                          .copyWith(color: AppColor.brand500),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(height: 25),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 50.0),
-                        child: Row(
-                          children: [
+                            const SizedBox(height: 27),
                             Text(
-                              'Last Scanned',
-                              textAlign: TextAlign.left,
+                              "Apple Pie",
                               style: Theme.of(
                                 context,
                               ).textTheme.titleLarge!.copyWith(
-                                fontSize: 24,
+                                fontSize: 18,
                                 fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            Text(
+                              "Mildly Estrogenic",
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: AppColor.brand500,
                               ),
                             ),
                           ],
                         ),
-                      ),
-                      SizedBox(height: 20),
-                      Center(
-                        child: AppContainer(
-                          height: 95,
-                          width: 355,
-                          child: Column(
-                            children: [
-                              SizedBox(height: 18),
-                              Row(
-                                children: [
-                                  SizedBox(width: 30),
-                                  Text(
-                                    "Apple Pie", //FOOD NAME
-                                    style:
-                                        Theme.of(context).textTheme.labelSmall,
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 12.0,
-                                      ),
-                                      child: Text(
-                                        textAlign: TextAlign.end,
-                                        '200cal', //CALORIES
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall!
-                                            .copyWith(color: AppColor.brand500),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Divider(color: Colors.grey[250], thickness: 1),
-                              Row(
-                                children: [
-                                  SizedBox(width: 30),
-                                  Text(
-                                    "Daal Chawal", //FOOD NAME
-                                    style:
-                                        Theme.of(context).textTheme.labelSmall,
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.only(
-                                        right: 12.0,
-                                      ),
-                                      child: Text(
-                                        textAlign: TextAlign.end,
-                                        '400cal', //CALORIES
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .labelSmall!
-                                            .copyWith(color: AppColor.brand500),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
+                        const Spacer(),
+                        Padding(
+                          padding: const EdgeInsets.only(right: 12.0),
+                          child: Text(
+                            '200cal',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.labelMedium!.copyWith(
+                              color: AppColor.brand500,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(height: 20),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              )
-              :
-              // ======================= UI FOR SCANNED PAGE ========================//
-              scannedPage
-              ? SizedBox(
-                height: MediaQuery.of(context).size.height * .65,
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(height: 50),
-                      SizedBox(
-                        width: 320,
-                        child: Text(
-                          textAlign: TextAlign.left,
-                          'Last Scanned',
-                          style: Theme.of(
-                            context,
-                          ).textTheme.titleLarge!.copyWith(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-
-                      SizedBox(
-                        child: ListView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return Column(
-                              children: [
-                                AppContainer(
-                                  height: 90,
-                                  width: 350,
-                                  child: Row(
-                                    children: [
-                                      SizedBox(width: 25),
-                                      // Image.asset(
-                                      //   'assets/images/food.png',
-                                      //   width: 50,
-                                      // ), //FOOD IMAGE
-                                      SizedBox(width: 20),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(height: 27),
-                                          Text(
-                                            "Apple Pie", //FOOD NAME
-                                            textAlign: TextAlign.left,
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.titleLarge!.copyWith(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                          Text(
-                                            "Mildly Estrogenic", //ESTROGENIC CONTENT
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: AppColor.brand500,
-                                            ),
-                                          ),
-                                          //ESTROGENIC CONTENT
-                                        ],
-                                      ),
-                                      Expanded(
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                            right: 12.0,
-                                          ),
-                                          child: Text(
-                                            textAlign: TextAlign.end,
-                                            '200cal', //CALORIES
-                                            style: Theme.of(
-                                              context,
-                                            ).textTheme.labelMedium!.copyWith(
-                                              color: AppColor.brand500,
-                                              fontWeight: FontWeight.w700,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(height: 15),
-                              ],
-                            );
-                          },
-                          itemCount: 3,
-                          shrinkWrap: true,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-              :
-              // ======================= UI FOR AI SUGGESTION PAGE ========================//
-              SizedBox(
-                height: MediaQuery.of(context).size.height * .65,
-                child: Column(
-                  children: [
-                    SizedBox(height: 50),
-                    SizedBox(
-                      width: 320,
-                      child: Text(
-                        textAlign: TextAlign.left,
-                        'AI Suggestions',
-                        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                          fontSize: 24,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    AppContainer(
-                      height: 350,
-                      width: 350,
-                      child: Column(
-                        children: [
-                          SizedBox(height: 20),
-                          Row(
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.only(left: 25.0),
-                                child: Image.asset(
-                                  'assets/images/AI.png',
-                                  width: 50,
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 20),
-                          Text(
-                            'Apple Pie', //AI GENERATED TEXT
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 20),
-                    Button(
-                      text: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            isCopied ? Icons.check : Icons.copy,
-                            color: Colors.white,
-                          ),
-                          SizedBox(width: 10),
-                          Text(
-                            isCopied ? 'Copied' : 'Copy to clipboard',
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
-                        ],
-                      ),
-                      width: 200,
-                      onTap: () {
-                        Clipboard.setData(
-                          ClipboardData(text: "Apple Pie"),
-                        ); //AI GENERATED TEXT SAME AS DISPLAYED
-                        showSnackBar(
-                          context,
-                          "Text has been copied to clipboard",
-                        );
-                        setState(() {
-                          isCopied = true;
-                        });
-                        Future.delayed(const Duration(seconds: 5), () {
-                          setState(() {
-                            isCopied = false;
-                          });
-                        });
-                      },
-                    ),
-                  ],
-                ),
-              ),
-          // ======================= UI FOR MONTHLY GOAL PAGE ========================//
-          // SizedBox(
-          //   height: MediaQuery.sizeOf(context).height * .65,
-          //   child: Column(),
-          // ),
-          NavBar(page: 1),
+                  const SizedBox(height: 15),
+                ],
+              );
+            },
+          ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAISuggestionPage(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 50),
+        SizedBox(
+          width: 320,
+          child: Text(
+            'AI Suggestions',
+            textAlign: TextAlign.left,
+            style: Theme.of(context).textTheme.titleLarge!.copyWith(
+              fontSize: 24,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        AppContainer(
+          height: 350,
+          width: 350,
+          child: Column(
+            children: [
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 25.0),
+                    child: Image.asset('assets/images/AI.png', width: 50),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              const Text('Apple Pie'),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        Button(
+          text: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(isCopied ? Icons.check : Icons.copy, color: Colors.white),
+              const SizedBox(width: 10),
+              Text(
+                isCopied ? 'Copied' : 'Copy to clipboard',
+                style: const TextStyle(color: Colors.white, fontSize: 16),
+              ),
+            ],
+          ),
+          width: 200,
+          onTap: () {
+            Clipboard.setData(const ClipboardData(text: "Apple Pie"));
+            showSnackBar(context, "Text has been copied to clipboard");
+            setState(() => isCopied = true);
+            Future.delayed(const Duration(seconds: 5), () {
+              setState(() => isCopied = false);
+            });
+          },
+        ),
+      ],
     );
   }
 }

@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:app_web_v1/services/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class Firestore {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -10,7 +11,10 @@ class Firestore {
   Future<Map<String, dynamic>?> getUserData() async {
     try {
       DocumentSnapshot doc =
-          await _firestore.collection('users').doc(AuthMethod.uid).get();
+          await _firestore
+              .collection('users')
+              .doc(FirebaseAuth.instance.currentUser!.uid)
+              .get();
       log("User data fetched: ${doc.data() as Map<String, dynamic>?}");
       return doc.data() as Map<String, dynamic>?;
     } catch (e) {
@@ -22,7 +26,7 @@ class Firestore {
   initialDataSet() {
     _firestore
         .collection('users')
-        .doc(AuthMethod.uid)
+        .doc(FirebaseAuth.instance.currentUser!.uid)
         .set({
           'name': 'test',
           'scannedCount': 0,
@@ -40,7 +44,7 @@ class Firestore {
   sendData() {
     _firestore
         .collection('users')
-        .doc(AuthMethod.uid)
+        .doc(FirebaseAuth.instance.currentUser!.uid)
         .collection('scanned')
         .doc(
           Timestamp.fromMillisecondsSinceEpoch(
