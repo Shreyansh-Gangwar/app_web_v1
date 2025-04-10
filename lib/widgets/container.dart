@@ -17,7 +17,7 @@ class AppContainer extends StatelessWidget {
     return Material(
       child: Container(
         decoration: BoxDecoration(
-          color: AppColor.bgcolor,
+          color: Colors.white,
           borderRadius: BorderRadius.circular(25),
           boxShadow: [
             BoxShadow(

@@ -48,8 +48,12 @@ class _NavBarState extends State<NavBar> {
                             'Home',
                             style: Theme.of(
                               context,
-                            ).textTheme.headlineMedium!.copyWith(fontSize: 20),
+                            ).textTheme.headlineMedium!.copyWith(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
+                          SizedBox(height: 5),
                           Container(
                             height: 10,
                             width: 10,
@@ -67,7 +71,6 @@ class _NavBarState extends State<NavBar> {
                         style: TextStyle(
                           fontSize: 20,
                           color: const Color(0xFF6B564D),
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
                 ],
@@ -108,8 +111,12 @@ class _NavBarState extends State<NavBar> {
                             'Profile',
                             style: Theme.of(
                               context,
-                            ).textTheme.headlineMedium!.copyWith(fontSize: 20),
+                            ).textTheme.headlineMedium!.copyWith(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
+                          SizedBox(height: 5),
                           Container(
                             height: 10,
                             width: 10,
@@ -127,7 +134,6 @@ class _NavBarState extends State<NavBar> {
                         style: TextStyle(
                           fontSize: 20,
                           color: const Color(0xFF6B564D),
-                          fontWeight: FontWeight.bold,
                         ),
                       ),
                 ],

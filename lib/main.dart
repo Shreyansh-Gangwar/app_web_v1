@@ -1,15 +1,24 @@
 import 'package:app_web_v1/firebase_options.dart';
 import 'package:app_web_v1/pages/profile_page.dart';
+import 'package:app_web_v1/pages/splash_screen.dart';
+import 'package:app_web_v1/services/firestore.dart';
+import 'package:app_web_v1/utilities/colors.dart';
 import 'package:app_web_v1/utilities/routes.dart';
 import 'package:app_web_v1/utilities/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'pages/home_page.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+  runApp(
+    MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => Firestore())],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -22,8 +31,8 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme(context),
 
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
-      initialRoute: AppRoutes.home,
+      home: SplashScreen(),
+      initialRoute: '/',
       routes: {
         AppRoutes.home: (context) => const HomePage(),
         AppRoutes.profile: (context) => const ProfilePage(),

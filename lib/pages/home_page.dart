@@ -26,26 +26,11 @@ class _HomePageState extends State<HomePage> {
   bool isCopied = false;
 
   @override
-  void initState() {
-    super.initState();
-    _initializeState();
-  }
-
-  Future<void> _initializeState() async {
-    isLoggedIn = await AuthMethod().isLoggedIn();
-    if (isLoggedIn) {
-      userData = await Firestore().getUserData();
-      userName = userData?['name'] ?? 'User';
-    }
-    setState(() {});
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
-          const SizedBox(height: 80),
+          const SizedBox(height: 90),
           _buildHeader(context),
           const SizedBox(height: 25),
           _buildPageSelector(context),
@@ -70,7 +55,9 @@ class _HomePageState extends State<HomePage> {
               ),
               Text(
                 'Start your day with a healthy meal!',
-                style: Theme.of(context).textTheme.labelSmall,
+                style: Theme.of(
+                  context,
+                ).textTheme.labelSmall!.copyWith(fontSize: 14),
               ),
             ],
           ),
@@ -83,12 +70,7 @@ class _HomePageState extends State<HomePage> {
             child: CircleAvatar(
               radius: 25,
               backgroundColor: Colors.grey[200],
-              child: Image.asset(
-                isLoggedIn && userData != null
-                    ? userData!['profileImage']
-                    : 'assets/images/user.png',
-                width: 35,
-              ),
+              child: Image.asset('assets/images/user.png', width: 35),
             ),
           ),
         ),
@@ -122,7 +104,7 @@ class _HomePageState extends State<HomePage> {
                 ? Theme.of(context).textTheme.labelMedium
                 : Theme.of(context).textTheme.labelLarge,
       ),
-      color: isSelected ? AppColor.brand500 : AppColor.bgcolor,
+      color: isSelected ? AppColor.brand500 : Colors.white,
       height: 32,
       onTap: () => setState(() => currentPage = page),
     );
@@ -168,7 +150,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Column(
                   children: [
-                    const SizedBox(height: 80),
+                    const SizedBox(height: 90),
                     Center(
                       child: Text(
                         'Today',
@@ -179,7 +161,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 30),
                     Text(
                       '1000/2500',
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
@@ -188,9 +170,9 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     const Text('Calories'),
-                    const SizedBox(height: 100),
+                    const SizedBox(height: 110),
                     _buildNutrientRow(context),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 30),
                     _buildEstrogenicContentRow(context),
                   ],
                 ),
@@ -271,10 +253,12 @@ class _HomePageState extends State<HomePage> {
             height: 95,
             width: 355,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 18),
                 _buildScannedItem(context, "Apple Pie", "200cal"),
+                SizedBox(height: 5),
                 Divider(color: Colors.grey[250], thickness: 1),
+                SizedBox(height: 5),
                 _buildScannedItem(context, "Daal Chawal", "400cal"),
               ],
             ),
@@ -323,7 +307,7 @@ class _HomePageState extends State<HomePage> {
           ListView.builder(
             physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
-            itemCount: 3,
+            itemCount: 7,
             itemBuilder: (context, index) {
               return Column(
                 children: [

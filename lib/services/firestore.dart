@@ -1,11 +1,23 @@
 import 'dart:developer';
-
-import 'package:app_web_v1/services/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 
-class Firestore {
+class Firestore with ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Map<String, dynamic>? _userData;
+
+  Map<String, dynamic>? get userData => _userData;
+
+  Future<ChangeNotifier> fetchUserData() async {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return this;
+
+    _userData = await getUserData();
+    notifyListeners();
+    return this;
+  }
 
   // Fetch user data from Firestore
   Future<Map<String, dynamic>?> getUserData() async {
