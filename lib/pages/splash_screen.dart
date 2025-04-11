@@ -11,13 +11,15 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
+  static bool get isLoggedIn => _SplashScreenState.isLoggedIn;
+  static Map<String, dynamic>? get userData => _SplashScreenState.userData;
+
   @override
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  @override
-  bool isLoggedIn = false;
+  static bool isLoggedIn = false;
   static Map<String, dynamic>? userData;
 
   void initState() {
@@ -39,7 +41,10 @@ class _SplashScreenState extends State<SplashScreen> {
     } else {
       userData = null;
       log(userData.toString());
-      Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+      Future.delayed(const Duration(seconds: 2), () {
+        // Navigate to the login screen after the delay
+        Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+      });
     }
   }
 

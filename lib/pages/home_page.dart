@@ -1,5 +1,4 @@
-import 'package:app_web_v1/services/firebase_auth.dart';
-import 'package:app_web_v1/services/firestore.dart';
+import 'package:app_web_v1/pages/splash_screen.dart';
 import 'package:app_web_v1/utilities/colors.dart';
 import 'package:app_web_v1/utilities/routes.dart';
 import 'package:app_web_v1/widgets/button.dart';
@@ -20,9 +19,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   PageType currentPage = PageType.stats;
-  bool isLoggedIn = false;
-  Map<String, dynamic>? userData;
-  String userName = '';
+  bool isLoggedIn = SplashScreen.isLoggedIn;
+  Map<String, dynamic>? userData = SplashScreen.userData;
   bool isCopied = false;
 
   @override
@@ -50,7 +48,9 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                isLoggedIn ? "Hey $userName" : "Hey User",
+                isLoggedIn && userData != null && userData!.containsKey('name')
+                    ? "Hey ${userData!['name']}"
+                    : "Hey User",
                 style: Theme.of(context).textTheme.titleLarge,
               ),
               Text(
@@ -89,6 +89,7 @@ class _HomePageState extends State<HomePage> {
           _buildPageButton(context, 'Scanned', PageType.scanned),
           const SizedBox(width: 10),
           _buildPageButton(context, 'AI Suggestion', PageType.aiSuggestion),
+          const SizedBox(width: 30),
         ],
       ),
     );

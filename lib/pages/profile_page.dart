@@ -1,6 +1,7 @@
 import 'package:app_web_v1/services/firebase_auth.dart';
 import 'package:app_web_v1/services/firestore.dart';
 import 'package:app_web_v1/utilities/colors.dart';
+import 'package:app_web_v1/utilities/routes.dart';
 import 'package:app_web_v1/widgets/button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -56,19 +57,22 @@ class _ProfilePageState extends State<ProfilePage> {
     return Column(
       children: [
         const SizedBox(height: 50),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new),
-              onPressed: () => Navigator.pop(context),
-            ),
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () {},
-              color: AppColor.brand500,
-            ),
-          ],
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back_ios_new),
+                onPressed: () => Navigator.pop(context),
+              ),
+              IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: () {},
+                color: AppColor.brand500,
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: 30),
         Row(
@@ -101,6 +105,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 width: 55,
               ),
             ),
+            SizedBox(width: 25),
           ],
         ),
         const SizedBox(height: 20),
@@ -120,6 +125,14 @@ class _ProfilePageState extends State<ProfilePage> {
               userData = null;
             });
           },
+        ),
+        SizedBox(height: 20),
+        Button(
+          text: const Text(
+            'AI Page [temp]',
+            style: TextStyle(color: Colors.white),
+          ),
+          onTap: () => Navigator.of(context).pushNamed(AppRoutes.ai),
         ),
       ],
     );
