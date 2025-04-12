@@ -164,7 +164,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 30),
                     Text(
-                      '1000/2500',
+                      '1000/${userData?['dailyCalories'] ?? '2000'}',
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                         fontSize: 24,
                         fontWeight: FontWeight.w900,

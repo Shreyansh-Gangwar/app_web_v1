@@ -1,4 +1,3 @@
-import 'package:app_web_v1/utilities/colors.dart';
 import 'package:flutter/material.dart';
 
 class AppContainer extends StatelessWidget {

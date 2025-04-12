@@ -7,15 +7,15 @@ import 'package:app_web_v1/utilities/routes.dart';
 import 'package:app_web_v1/utilities/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+// import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'pages/home_page.dart';
 import 'package:provider/provider.dart';
-import 'package:google_generative_ai/google_generative_ai.dart';
+// import 'package:google_generative_ai/google_generative_ai.dart';
 
 Future<void> main() async {
-  await dotenv.load(fileName: ".env");
-  final apiKey = dotenv.env['GOOGLE_API_KEY'];
-  final model = GenerativeModel(model: '', apiKey: apiKey ?? 'default_api_key');
+  // await dotenv.load(fileName: "services/.env");
+  // final apiKey = dotenv.env['GOOGLE_API_KEY'];
+  // final model = GenerativeModel(model: '', apiKey: apiKey ?? 'default_api_key');
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(

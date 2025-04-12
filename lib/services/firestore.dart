@@ -40,9 +40,10 @@ class Firestore with ChangeNotifier {
         .collection('users')
         .doc(FirebaseAuth.instance.currentUser!.uid)
         .set({
-          'name': 'test',
+          'name': 'User',
           'scannedCount': 0,
           'savedCount': 0,
+          'dailyCalories': 2000,
           'joiningDate': Timestamp.now(),
         })
         .then((value) {
@@ -66,5 +67,14 @@ class Firestore with ChangeNotifier {
         .set({'name': 'test'})
         .then((value) => log("Data sent"))
         .catchError((error) => log("Failed to send data: $error"));
+  }
+
+  updateUserData(String field, dynamic value) {
+    _firestore
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .update({field: value})
+        .then((value) => log("User data updated"))
+        .catchError((error) => log("Failed to update user data: $error"));
   }
 }

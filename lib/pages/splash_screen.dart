@@ -22,6 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
   static bool isLoggedIn = false;
   static Map<String, dynamic>? userData;
 
+  @override
   void initState() {
     super.initState();
     _initializeState();
