@@ -13,6 +13,7 @@ class SplashScreen extends StatefulWidget {
 
   static bool get isLoggedIn => _SplashScreenState.isLoggedIn;
   static Map<String, dynamic>? get userData => _SplashScreenState.userData;
+  static Map<String, dynamic>? get dailyData => _SplashScreenState.dailyData;
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();
@@ -21,6 +22,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   static bool isLoggedIn = false;
   static Map<String, dynamic>? userData;
+  static Map<String, dynamic>? dailyData;
 
   @override
   void initState() {
@@ -31,17 +33,19 @@ class _SplashScreenState extends State<SplashScreen> {
   _initializeState() async {
     isLoggedIn = await AuthMethod().isLoggedIn();
     if (isLoggedIn) {
-      Provider.of<Firestore>(context, listen: false).fetchUserData().then((_) {
-        userData = Provider.of<Firestore>(context, listen: false).userData;
-      });
-      log(userData.toString());
+      Provider.of<Firestore>(context, listen: false).initListeners();
+
       Future.delayed(const Duration(seconds: 2), () {
         // Navigate to the home screen after the delay
         Navigator.of(context).pushReplacementNamed(AppRoutes.home);
       });
+
+      Firestore().addDailycaloriesCollection();
     } else {
       userData = null;
+
       log(userData.toString());
+
       Future.delayed(const Duration(seconds: 2), () {
         // Navigate to the login screen after the delay
         Navigator.of(context).pushReplacementNamed(AppRoutes.home);

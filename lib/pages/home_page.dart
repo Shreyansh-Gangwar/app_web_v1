@@ -1,4 +1,7 @@
+import 'dart:ffi';
+
 import 'package:app_web_v1/pages/splash_screen.dart';
+import 'package:app_web_v1/services/firestore.dart';
 import 'package:app_web_v1/utilities/colors.dart';
 import 'package:app_web_v1/utilities/routes.dart';
 import 'package:app_web_v1/widgets/button.dart';
@@ -7,6 +10,7 @@ import 'package:app_web_v1/widgets/navbar.dart';
 import 'package:app_web_v1/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 enum PageType { stats, scanned, aiSuggestion }
 
@@ -20,8 +24,16 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   PageType currentPage = PageType.stats;
   bool isLoggedIn = SplashScreen.isLoggedIn;
-  Map<String, dynamic>? userData = SplashScreen.userData;
+  Map<String, dynamic>? userData;
+  Map<String, dynamic>? dailyData;
   bool isCopied = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    userData = Provider.of<Firestore>(context).userData;
+    dailyData = Provider.of<Firestore>(context).dailyData;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +155,10 @@ class _HomePageState extends State<HomePage> {
                           strokeWidth: 18,
                           backgroundColor: const Color(0xfff3edea),
                           valueColor: AlwaysStoppedAnimation(AppColor.brand500),
-                          value: 0.42,
+                          value:
+                              ((dailyData?['caloriesConsumed'] ?? 0)
+                                  .toDouble()) /
+                              ((userData?['dailyCalories'] ?? 2000).toDouble()),
                         ),
                       ),
                     ),
@@ -164,7 +179,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     const SizedBox(height: 30),
                     Text(
-                      '1000/${userData?['dailyCalories'] ?? '2000'}',
+                      '${dailyData?['caloriesConsumed'] ?? ' 0'}/${userData?['dailyCalories'] ?? '2000'}',
                       style: Theme.of(context).textTheme.titleLarge!.copyWith(
                         fontSize: 24,
                         fontWeight: FontWeight.w900,
@@ -191,9 +206,21 @@ class _HomePageState extends State<HomePage> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _buildNutrientColumn(context, '50', 'Protein'),
-        _buildNutrientColumn(context, '50', 'Carbs'),
-        _buildNutrientColumn(context, '50', 'Fats'),
+        _buildNutrientColumn(
+          context,
+          dailyData?['protien'].toString() ?? '0',
+          'Protein',
+        ),
+        _buildNutrientColumn(
+          context,
+          dailyData?['carbs'].toString() ?? '0',
+          'Carbs',
+        ),
+        _buildNutrientColumn(
+          context,
+          dailyData?['fat'].toString() ?? '0',
+          'Fats',
+        ),
       ],
     );
   }

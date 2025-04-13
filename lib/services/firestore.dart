@@ -8,15 +8,56 @@ class Firestore with ChangeNotifier {
 
   Map<String, dynamic>? _userData;
 
+  Map<String, dynamic>? _dailyData;
+
   Map<String, dynamic>? get userData => _userData;
+
+  Map<String, dynamic>? get dailyData => _dailyData;
 
   Future<ChangeNotifier> fetchUserData() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) return this;
 
     _userData = await getUserData();
+    _dailyData = await addDailycaloriesCollection();
     notifyListeners();
+
     return this;
+  }
+
+  void initListeners() {
+    listenToUserData();
+    listenToDailyData();
+  }
+
+  void listenToUserData() {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    _firestore.collection('users').doc(uid).snapshots().listen((doc) {
+      _userData = doc.data();
+      notifyListeners(); // Triggers UI updates wherever the provider is used
+      log("User data updated in real-time: $_userData");
+    });
+  }
+
+  void listenToDailyData() {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    if (uid == null) return;
+
+    final today = Timestamp.now().toDate().toString().split(' ')[0];
+
+    _firestore
+        .collection('users')
+        .doc(uid)
+        .collection('DailyData')
+        .doc(today)
+        .snapshots()
+        .listen((doc) {
+          _dailyData = doc.data();
+          notifyListeners();
+          log("Daily data updated in real-time: $_dailyData");
+        });
   }
 
   // Fetch user data from Firestore
@@ -76,5 +117,34 @@ class Firestore with ChangeNotifier {
         .update({field: value})
         .then((value) => log("User data updated"))
         .catchError((error) => log("Failed to update user data: $error"));
+  }
+
+  addDailycaloriesCollection() async {
+    CollectionReference dailyCaloriesCollection = _firestore
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.uid)
+        .collection('DailyData');
+
+    DocumentSnapshot doc =
+        await dailyCaloriesCollection
+            .doc(Timestamp.now().toDate().toString().split(' ')[0])
+            .get();
+
+    if (doc.exists) {
+      log("Document already exists");
+      return doc.data() as Map<String, dynamic>?;
+    }
+    dailyCaloriesCollection
+        .doc(Timestamp.now().toDate().toString().split(' ')[0])
+        .set({
+          'date': Timestamp.now().toDate(),
+          'caloriesConsumed': 0,
+          'protien': 0,
+          'carbs': 0,
+          'fat': 0,
+        })
+        .then((value) => log("Daily calories added"))
+        .catchError((error) => log("Failed to add daily calories: $error"));
+    return doc.data() as Map<String, dynamic>?;
   }
 }
