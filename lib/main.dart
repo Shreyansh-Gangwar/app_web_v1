@@ -1,5 +1,6 @@
 import 'package:app_web_v1/firebase_options.dart';
 import 'package:app_web_v1/pages/AI_page.dart';
+import 'package:app_web_v1/pages/login_page.dart';
 import 'package:app_web_v1/pages/profile_page.dart';
 import 'package:app_web_v1/pages/splash_screen.dart';
 import 'package:app_web_v1/services/firestore.dart';
@@ -42,6 +43,7 @@ class MyApp extends StatelessWidget {
         AppRoutes.home: (context) => const HomePage(),
         AppRoutes.profile: (context) => const ProfilePage(),
         AppRoutes.ai: (context) => const AiPage(),
+        AppRoutes.login: (context) => const LoginPage(),
       },
     );
   }

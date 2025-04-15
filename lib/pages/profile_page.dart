@@ -6,6 +6,7 @@ import 'package:app_web_v1/utilities/routes.dart';
 import 'package:app_web_v1/widgets/button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -17,22 +18,13 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   bool isLoggedIn = false;
 
-  Map<String, dynamic>? userData = {};
-
   String userName = 'User';
   String joiningDate = 'N/A';
   Timestamp joiningDateTimestamp = Timestamp.now();
   int daysCount = 0;
   final FocusNode _caloriesFocusNode = FocusNode();
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeState();
-    _caloriesFocusNode.addListener(() {
-      setState(() {});
-    });
-  }
+  Map<String, dynamic>? dailyData;
+  Map<String, dynamic>? userData;
 
   @override
   void dispose() {
@@ -40,20 +32,19 @@ class _ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
-  Future<void> _initializeState() async {
-    isLoggedIn = await AuthMethod().isLoggedIn();
-    if (isLoggedIn) {
-      userData = SplashScreen.userData;
-      if (userData != null) {
-        userName = userData!['name'];
-        Timestamp joiningDateTimestamp = userData!['joiningDate'];
-        joiningDate = joiningDateTimestamp.toDate().toString().split(' ')[0];
-        daysCount =
-            DateTime.now().difference(joiningDateTimestamp.toDate()).inDays;
-      }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    userData = Provider.of<Firestore>(context).userData;
+    dailyData = Provider.of<Firestore>(context).dailyData;
+    if (userData != null) {
+      isLoggedIn = true;
+      userName = userData?['name'] ?? 'User';
+      joiningDateTimestamp = userData?['joiningDate'] ?? Timestamp.now();
+      joiningDate = joiningDateTimestamp.toDate().toString().split(' ')[0];
+      daysCount =
+          DateTime.now().difference(joiningDateTimestamp.toDate()).inDays;
     }
-
-    setState(() {});
   }
 
   @override
@@ -199,42 +190,41 @@ class _ProfilePageState extends State<ProfilePage> {
         // Input field for daily calories
         SizedBox(
           width: 45,
-          child: TextField(
-            controller: TextEditingController(
+          child: _underlineTextField(
+            userData?['dailyCalories']?.toString() ?? '2000',
+            TextEditingController(
               text: userData?['dailyCalories']?.toString() ?? '2000',
             ),
-            keyboardType: TextInputType.number,
-            onChanged: (value) {
-              // Update daily calories in Firestore
-              Firestore().updateUserData(
-                'dailyCalories',
-                int.tryParse(value) ?? 2000,
-              );
-              SplashScreen.userData?['dailyCalories'] =
-                  int.tryParse(value) ?? 2000;
-            },
-            focusNode: _caloriesFocusNode,
-            decoration: InputDecoration(
-              isDense: true,
-              contentPadding: const EdgeInsets.only(bottom: 2),
-              hintText: '2000',
-              hintStyle: Theme.of(context).textTheme.labelLarge!.copyWith(
-                color:
-                    _caloriesFocusNode.hasFocus
-                        ? Colors.grey
-                        : AppColor.brand500,
-              ),
-              enabledBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.grey),
-              ),
-              focusedBorder: const UnderlineInputBorder(
-                borderSide: BorderSide(color: Colors.orange),
-              ),
-            ),
-            style: Theme.of(context).textTheme.labelLarge,
+            _caloriesFocusNode,
           ),
         ),
       ],
+    );
+  }
+
+  Widget _underlineTextField(
+    String hintText,
+    TextEditingController controller,
+    FocusNode focusNode,
+  ) {
+    return TextField(
+      controller: controller,
+      focusNode: focusNode,
+      decoration: InputDecoration(
+        isDense: true,
+        contentPadding: const EdgeInsets.only(bottom: 2),
+        hintText: hintText,
+        hintStyle: Theme.of(context).textTheme.labelLarge!.copyWith(
+          color: focusNode.hasFocus ? Colors.grey : AppColor.brand500,
+        ),
+        enabledBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.grey),
+        ),
+        focusedBorder: const UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.orange),
+        ),
+      ),
+      style: Theme.of(context).textTheme.labelLarge,
     );
   }
 
@@ -253,7 +243,6 @@ class _ProfilePageState extends State<ProfilePage> {
             await AuthMethod().signinwithGoogle(context);
             setState(() {
               isLoggedIn = true;
-              _initializeState();
             });
           },
         ),
