@@ -176,11 +176,7 @@ class _LoginPageState extends State<LoginPage> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.fromLTRB(25, 0, 25, 40),
         child: InkWell(
-          onTap: () {
-            setState(() {
-              // REGISTERATION PAGE
-            });
-          },
+          onTap: () => Navigator.of(context).pushNamed(AppRoutes.signup),
           child: Container(
             height: 50,
             width: double.infinity,

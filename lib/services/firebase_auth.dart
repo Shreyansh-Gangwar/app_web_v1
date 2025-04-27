@@ -14,96 +14,114 @@ class AuthMethod {
   static String uid = '1';
 
   // Sign up user with email & password
-
   Future<String> signupUser({
     required String email,
     required String password,
-    required String name,
+    String? name,
   }) async {
-    String res = "Some error Occurred";
-    try {
-      if (email.isNotEmpty || password.isNotEmpty || name.isNotEmpty) {
-        UserCredential cred = await _auth.createUserWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-        uid = FirebaseAuth.instance.currentUser!.uid;
-        log(cred.user!.uid);
-        await _firestore.collection("users").doc(cred.user!.uid).set({
-          'name': name,
-          'uid': cred.user!.uid,
-          'email': email,
-          'scanned': 0,
-        });
-
-        res = "success";
-      }
-    } catch (err) {
-      return err.toString();
+    if (email.isEmpty || password.isEmpty) {
+      return "Email and password cannot be empty";
     }
-    return res;
+    if (!RegExp(
+      r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9]+\.[a-zA-Z]+",
+    ).hasMatch(email)) {
+      return "Invalid email format";
+    }
+    if (password.length < 6) {
+      return "Password must be at least 6 characters long";
+    }
+
+    try {
+      UserCredential cred = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      uid = cred.user!.uid;
+      log(uid);
+
+      await _firestore.collection("users").doc(uid).set({
+        'name': name ?? 'User',
+        'uid': uid,
+        'email': email,
+        'scanned': 0,
+      });
+
+      return "success";
+    } on FirebaseAuthException catch (e) {
+      return e.message ?? "An unexpected error occurred";
+    } catch (err) {
+      log(err.toString());
+      return "An unexpected error occurred";
+    }
   }
 
-  //Log in user to an already existing email account
-
+  // Log in user to an already existing email account
   Future<String> loginUser({
     required String email,
     required String password,
   }) async {
-    String res = "Some error Occurred";
-    try {
-      if (email.isNotEmpty || password.isNotEmpty) {
-        await _auth.signInWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-        res = "success";
-      } else {
-        res = "Please enter all the fields";
-      }
-    } catch (err) {
-      return err.toString();
+    if (email.isEmpty || password.isEmpty) {
+      return "Please enter all the fields";
     }
-    return res;
+
+    try {
+      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      return "success";
+    } on FirebaseAuthException catch (e) {
+      return e.message ?? "An unexpected error occurred";
+    } catch (err) {
+      log(err.toString());
+      return "An unexpected error occurred";
+    }
   }
 
-  signOut() async {
-    await _auth.signOut();
+  // Sign out user
+  Future<void> signOut() async {
+    try {
+      await _auth.signOut();
+    } catch (err) {
+      log("Error signing out: $err");
+    }
   }
-  // Sign in users with google
 
-  signinwithGoogle(BuildContext context) async {
-    String res = "Some error Occurred";
+  // Sign in users with Google
+  Future<String> signinwithGoogle(BuildContext context) async {
     try {
       final GoogleSignInAccount? gUser = await GoogleSignIn().signIn();
-      final GoogleSignInAuthentication gAuth = await gUser!.authentication;
+      if (gUser == null) {
+        return "Google sign-in aborted";
+      }
+
+      final GoogleSignInAuthentication gAuth = await gUser.authentication;
       final OAuthCredential userCred = GoogleAuthProvider.credential(
         accessToken: gAuth.accessToken,
         idToken: gAuth.idToken,
       );
-      await FirebaseAuth.instance.signInWithCredential(userCred);
-      uid = FirebaseAuth.instance.currentUser!.uid;
-      await _firestore.collection("users").doc(uid).update({
-        'uid': FirebaseAuth.instance.currentUser!.uid,
-        'email': FirebaseAuth.instance.currentUser!.email,
-      });
-      await Future.delayed(const Duration(milliseconds: 500));
-      res = 'success';
-      showSnackBar(context, res);
-      log(res);
+
+      UserCredential cred = await _auth.signInWithCredential(userCred);
+      uid = cred.user!.uid;
+
+      await _firestore.collection("users").doc(uid).set({
+        'uid': uid,
+        'email': cred.user!.email,
+      }, SetOptions(merge: true));
+
+      showSnackBar(context, "success");
+      log("Google sign-in successful: $uid");
+      return "success";
+    } on FirebaseAuthException catch (e) {
+      showSnackBar(context, e.message ?? "An unexpected error occurred");
+      log(e.toString());
+      return e.message ?? "An unexpected error occurred";
     } catch (err) {
+      showSnackBar(context, "An unexpected error occurred");
       log(err.toString());
-      showSnackBar(context, err.toString());
+      return "An unexpected error occurred";
     }
-    return res;
   }
 
+  // Check if user is logged in
   Future<bool> isLoggedIn() async {
-    User? user = _auth.currentUser;
-    if (user != null) {
-      return true;
-    } else {
-      return false;
-    }
+    return _auth.currentUser != null;
   }
 }
