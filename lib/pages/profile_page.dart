@@ -210,6 +210,11 @@ class _ProfilePageState extends State<ProfilePage> {
     return TextField(
       controller: controller,
       focusNode: focusNode,
+      onSubmitted: (value) {
+        if (value.isNotEmpty) {
+          Firestore().updateUserData('dailyCalories', int.parse(value));
+        }
+      },
       decoration: InputDecoration(
         isDense: true,
         contentPadding: const EdgeInsets.only(bottom: 2),

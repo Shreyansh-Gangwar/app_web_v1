@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:app_web_v1/pages/splash_screen.dart';
+import 'package:app_web_v1/services/firebase_auth.dart';
 import 'package:app_web_v1/services/firestore.dart';
 import 'package:app_web_v1/utilities/colors.dart';
 import 'package:app_web_v1/utilities/routes.dart';
@@ -8,6 +9,7 @@ import 'package:app_web_v1/widgets/button.dart';
 import 'package:app_web_v1/widgets/container.dart';
 import 'package:app_web_v1/widgets/navbar.dart';
 import 'package:app_web_v1/widgets/snackbar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
@@ -23,7 +25,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   PageType currentPage = PageType.stats;
-  bool isLoggedIn = SplashScreen.isLoggedIn;
+  bool isLoggedIn = FirebaseAuth.instance.currentUser != null;
   Map<String, dynamic>? userData;
   Map<String, dynamic>? dailyData;
   bool isCopied = false;

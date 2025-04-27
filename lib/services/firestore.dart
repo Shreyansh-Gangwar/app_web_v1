@@ -16,7 +16,10 @@ class Firestore with ChangeNotifier {
 
   Future<ChangeNotifier> fetchUserData() async {
     final uid = FirebaseAuth.instance.currentUser?.uid;
-    if (uid == null) return this;
+    if (uid == null) {
+      log("User is not logged in");
+      return this;
+    }
 
     _userData = await getUserData();
     _dailyData = await addDailycaloriesCollection();

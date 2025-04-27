@@ -39,7 +39,6 @@ class _SplashScreenState extends State<SplashScreen> {
         // Navigate to the home screen after the delay
         Navigator.of(context).pushReplacementNamed(AppRoutes.home);
       });
-
       Firestore().addDailycaloriesCollection();
     } else {
       userData = null;
@@ -47,7 +46,6 @@ class _SplashScreenState extends State<SplashScreen> {
       log(userData.toString());
 
       Future.delayed(const Duration(seconds: 2), () {
-        // Navigate to the login screen after the delay
         Navigator.of(context).pushReplacementNamed(AppRoutes.login);
       });
     }
@@ -60,12 +58,13 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'Welcome to App Web V1',
-              style: Theme.of(context).textTheme.titleLarge,
+            const SizedBox(height: 100),
+            CircleAvatar(
+              backgroundImage: AssetImage('assets/images/logo/logo.png'),
+              maxRadius: 75,
             ), // LOGO GOES HERE
-            const SizedBox(height: 20),
-            SpinKitPulse(color: AppColor.brand500),
+            const SizedBox(height: 250),
+            SpinKitThreeBounce(size: 25.0, color: AppColor.brand500),
           ],
         ),
       ),

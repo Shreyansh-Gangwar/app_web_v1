@@ -1,6 +1,13 @@
+import 'dart:developer';
+
+import 'package:app_web_v1/pages/splash_screen.dart';
 import 'package:app_web_v1/services/firebase_auth.dart';
+import 'package:app_web_v1/services/firestore.dart';
 import 'package:app_web_v1/utilities/colors.dart';
+import 'package:app_web_v1/utilities/routes.dart';
+import 'package:app_web_v1/widgets/snackbar.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -9,7 +16,70 @@ class LoginPage extends StatefulWidget {
   State<LoginPage> createState() => _LoginPageState();
 }
 
+String email = '';
+String password = '';
+
 class _LoginPageState extends State<LoginPage> {
+  bool isLoading = false;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passController = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    emailController.addListener(() {
+      setState(() {});
+    });
+    passController.addListener(() {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passController.dispose();
+    super.dispose();
+  }
+
+  void loginUser() async {
+    setState(() {
+      isLoading = true;
+    });
+    String res = await AuthMethod().loginUser(
+      email: emailController.text,
+      password: passController.text,
+    );
+
+    if (res == "success") {
+      log('Email: $email, Password: $password, isLoading: $isLoading');
+      if (mounted) {
+        final firestoreProvider = Provider.of<Firestore>(
+          context,
+          listen: false,
+        );
+        await firestoreProvider.fetchUserData(); // Fetch user data after login
+        firestoreProvider.initListeners(); // Initialize listeners
+        setState(() {
+          isLoading = false;
+        });
+
+        Navigator.of(context).pushReplacementNamed(AppRoutes.home);
+      }
+    } else {
+      setState(() {
+        if (mounted) {
+          showSnackBar(context, res);
+        }
+      });
+      setState(() {
+        isLoading = false;
+      });
+      showSnackBar(context, res);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,7 +98,7 @@ class _LoginPageState extends State<LoginPage> {
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
-                child: _buildLoginForm(),
+                child: Form(key: _formKey, child: _buildLoginForm()),
               ),
               const Padding(
                 padding: EdgeInsets.all(8.0),
@@ -44,8 +114,19 @@ class _LoginPageState extends State<LoginPage> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(25, 0, 25, 0),
                 child: InkWell(
-                  onTap: () {
-                    AuthMethod().signinwithGoogle(context);
+                  onTap: () async {
+                    setState(() {
+                      // GOOGLE SIGN IN
+                      isLoading = true;
+                    });
+                    await AuthMethod().signinwithGoogle(context);
+                    Provider.of<Firestore>(
+                      context,
+                      listen: false,
+                    ).initListeners();
+                    setState(() {});
+                    log('google sign in');
+                    Navigator.of(context).pushReplacementNamed(AppRoutes.home);
                   },
                   child: Container(
                     height: 50,
@@ -127,20 +208,100 @@ class _LoginPageState extends State<LoginPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
+          // IconButton(
+          //   icon: const Icon(Icons.arrow_back),
+          //   onPressed: () {
+          //     Navigator.of(context).pop();
+          //   },
+          // ),
           Text(
             title,
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          const SizedBox(width: 48), // Placeholder for alignment
+          // const SizedBox(width: 48), // Placeholder for alignment
         ],
+      ),
+    );
+  }
+
+  bool _obscurePassword = true; // Add this to your state class
+
+  Widget _buildTextField(String label, bool isPassword) {
+    return TextFormField(
+      controller: isPassword ? passController : emailController,
+      keyboardType:
+          isPassword
+              ? TextInputType.visiblePassword
+              : TextInputType.emailAddress,
+      textInputAction: isPassword ? TextInputAction.done : TextInputAction.next,
+      obscureText: isPassword ? _obscurePassword : false,
+      readOnly: isLoading,
+      enabled: !isLoading,
+      textCapitalization: TextCapitalization.none,
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return '$label cannot be empty';
+        }
+
+        if (!isPassword) {
+          final emailRegex = RegExp(
+            r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+          );
+          if (!emailRegex.hasMatch(value.trim())) {
+            return 'Please enter a valid email address';
+          }
+        } else {
+          if (value.length < 6) {
+            return 'Password must be at least 6 characters';
+          }
+          final passwordRegex = RegExp(r'^(?=.*[A-Za-z])(?=.*\d).+$');
+          if (!passwordRegex.hasMatch(value)) {
+            return 'Password must contain at least one letter and one number';
+          }
+        }
+
+        return null;
+      },
+      onFieldSubmitted: (value) {
+        if (isPassword) {
+          if (_formKey.currentState?.validate() ?? false) {
+            loginUser();
+          }
+        } else {
+          FocusScope.of(context).nextFocus();
+        }
+      },
+      onChanged: (value) {
+        setState(() {
+          if (isPassword) {
+            password = value;
+          } else {
+            email = value;
+          }
+        });
+      },
+
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15.0),
+          borderSide: BorderSide(color: AppColor.brand500),
+        ),
+        suffixIcon:
+            isPassword
+                ? IconButton(
+                  icon: Icon(
+                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                )
+                : null,
       ),
     );
   }
@@ -152,23 +313,10 @@ class _LoginPageState extends State<LoginPage> {
         const SizedBox(height: 20),
         _buildTextField('Password', true),
         const SizedBox(height: 20),
-        _buildActionButton('Login', AppColor.brand500, () {
-          // Handle login action
-        }),
+        isLoading
+            ? const CircularProgressIndicator()
+            : _buildActionButton('Login', AppColor.brand500, loginUser),
       ],
-    );
-  }
-
-  Widget _buildTextField(String label, bool isPassword) {
-    return TextFormField(
-      obscureText: isPassword,
-      decoration: InputDecoration(
-        labelText: label,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15.0),
-          borderSide: BorderSide(color: AppColor.brand500),
-        ),
-      ),
     );
   }
 
@@ -176,7 +324,6 @@ class _LoginPageState extends State<LoginPage> {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
           backgroundColor: color,
           padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
@@ -184,6 +331,13 @@ class _LoginPageState extends State<LoginPage> {
             borderRadius: BorderRadius.circular(20.0),
           ),
         ),
+        onPressed: () {
+          if (_formKey.currentState?.validate() ?? false) {
+            onPressed();
+          } else {
+            showSnackBar(context, 'Please fill in all fields');
+          }
+        },
         child: Text(label, style: const TextStyle(fontSize: 18)),
       ),
     );
